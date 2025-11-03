@@ -1,0 +1,25 @@
+{
+  // VS Code 快捷键配置
+  // 将以下配置添加到 keybindings.json 中
+  
+  // 快速构建: Ctrl+Shift+B (已默认)
+  // 快速运行任务: Ctrl+Shift+P，输入"任务: 运行任务"
+  
+  // 推荐的快捷键绑定 (可选):
+  // [
+  //   {
+  //     "key": "ctrl+shift+b",
+  //     "command": "workbench.action.tasks.build"
+  //   },
+  //   {
+  //     "key": "ctrl+alt+t",
+  //     "command": "workbench.action.tasks.runTask",
+  //     "args": "Build and Install"
+  //   },
+  //   {
+  //     "key": "ctrl+alt+r",
+  //     "command": "workbench.action.tasks.runTask",
+  //     "args": "Build, Install and Run"
+  //   }
+  // ]
+}

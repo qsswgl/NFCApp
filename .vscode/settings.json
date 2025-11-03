@@ -1,0 +1,52 @@
+{
+  // VS Code 工作区设置
+  "editor.formatOnSave": true,
+  "[kotlin]": {
+    "editor.formatOnSave": true
+  },
+  "[xml]": {
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.formatOnSave": true
+  },
+  
+  // 文件关联
+  "files.associations": {
+    "*.gradle.kts": "kotlin",
+    "*.gradle": "gradle"
+  },
+  
+  // 排除文件夹
+  "files.exclude": {
+    "**/.gradle": true,
+    "**/build": true,
+    "**/.idea": true,
+    "**/*.class": true
+  },
+  
+  // 搜索排除
+  "search.exclude": {
+    "**/.gradle": true,
+    "**/build": true,
+    "**/.idea": true,
+    "**/node_modules": true
+  },
+  
+  // Gradle 设置
+  "gradle.nestedProjects": true,
+  
+  // 终端设置
+  "terminal.integrated.shell.windows": "powershell.exe",
+  "terminal.integrated.shellArgs.windows": ["-NoExit", "-Command"],
+  
+  // 代码片段和自动完成
+  "editor.suggest.showStatusBar": true,
+  "editor.suggestSelection": "first",
+  
+  // 行号和缩进
+  "editor.lineNumbers": "on",
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.rulers": [80, 120]
+}

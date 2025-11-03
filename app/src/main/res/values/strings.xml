@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NFC 读写系统</string>
+    <string name="btn_write">写入</string>
+    <string name="btn_read">读取</string>
+    <string name="btn_print">打印</string>
+    <string name="btn_upload">上传</string>
+</resources>

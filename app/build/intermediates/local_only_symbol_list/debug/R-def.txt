@@ -1,0 +1,36 @@
+R_DEF: Internal format may change without notice
+local
+color accent_color
+color card_background
+color light_gray
+color primary_color
+color primary_dark_color
+color text_color
+drawable card_background
+drawable ic_print
+drawable ic_read
+drawable ic_upload
+drawable ic_write
+id btn_print
+id btn_read
+id btn_upload
+id btn_write
+id et_car_number
+id et_card_number
+id recycler_view_records
+id tv_car_number
+id tv_card_number
+id tv_content
+id tv_nfcid
+id tv_time
+layout activity_main
+layout item_record
+mipmap ic_launcher
+string app_name
+string btn_print
+string btn_read
+string btn_upload
+string btn_write
+style Theme.NFCApp
+xml backup_rules
+xml data_extraction_rules

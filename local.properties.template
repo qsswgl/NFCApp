@@ -1,0 +1,57 @@
+# ============================================================
+# local.properties - Android SDK 本地配置文件
+# ============================================================
+# 此文件用于配置 Android SDK 的路径
+# 不应该被提交到版本控制系统（已在 .gitignore 中）
+# 
+# 需要修改以下内容为你的 Android SDK 路径：
+# ============================================================
+
+# Android SDK 路径 (必须修改)
+# 示例 (Windows):
+#   sdk.dir=C:\\Users\\你的用户名\\AppData\\Local\\Android\\sdk
+#
+# 示例 (Mac):
+#   sdk.dir=/Users/你的用户名/Library/Android/sdk
+#
+# 示例 (Linux):
+#   sdk.dir=/home/你的用户名/Android/sdk
+
+sdk.dir=C:\\Users\\YourUsername\\AppData\\Local\\Android\\sdk
+
+# ============================================================
+# 如何找到你的 Android SDK 路径？
+# ============================================================
+# 
+# Windows:
+#   1. 打开 Android Studio
+#   2. File → Settings → Appearance & Behavior → System Settings → Android SDK
+#   3. 查看 "Android SDK Location" 字段
+#   4. 复制路径到上面的 sdk.dir 字段
+#
+# Mac:
+#   1. 打开 Android Studio
+#   2. Android Studio → Preferences → Appearance & Behavior → System Settings → Android SDK
+#   3. 查看 "Android SDK Location" 字段
+#   4. 复制路径到上面的 sdk.dir 字段
+#
+# Linux:
+#   1. 打开 Android Studio
+#   2. File → Settings → Appearance & Behavior → System Settings → Android SDK
+#   3. 查看 "Android SDK Location" 字段
+#   4. 复制路径到上面的 sdk.dir 字段
+#
+# ============================================================
+# 快速查找方法
+# ============================================================
+#
+# Windows (PowerShell):
+#   $env:ANDROID_HOME 或 $env:ANDROID_SDK_ROOT
+#
+# Windows (CMD):
+#   echo %ANDROID_HOME% 或 echo %ANDROID_SDK_ROOT%
+#
+# Mac/Linux:
+#   echo $ANDROID_HOME 或 echo $ANDROID_SDK_ROOT
+#
+# ============================================================
