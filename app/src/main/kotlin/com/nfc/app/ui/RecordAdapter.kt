@@ -30,11 +30,33 @@ class RecordAdapter : ListAdapter<NFCRecord, RecordAdapter.RecordViewHolder>(Rec
 
         fun bind(record: NFCRecord) {
             binding.apply {
-                tvNfcid.text = "NFCID: ${record.nfcId}"
+                tvNfcid.text = "NFCID: ${record.nfcId}"  // 已隐藏
                 tvCardNumber.text = "卡号: ${record.cardNumber}"
-                tvCarNumber.text = "车号: ${record.carNumber}"
+                tvCarNumber.text = "机号: ${record.carNumber}"
+                tvUnitName.text = "单位名称: ${record.unitName}"
+                tvDeviceName.text = "设备名称: ${record.deviceName}"
+                tvAmount.text = "消费金额: ${record.amount}"
                 tvTime.text = "时间: ${formatTime(record.readTime)}"
-                tvContent.text = "内容: ${record.content}"
+                tvContent.text = "内容: ${record.content}"  // 已隐藏
+                
+                // 显示上传状态
+                when {
+                    !record.uploadStatus -> {
+                        // 未上传
+                        tvUploadStatus.text = "☐ 未上传"
+                        tvUploadStatus.setTextColor(android.graphics.Color.parseColor("#999999"))
+                    }
+                    record.uploadSuccess -> {
+                        // 上传成功
+                        tvUploadStatus.text = "✓ 已上传 ${formatTime(record.uploadTime)}"
+                        tvUploadStatus.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
+                    }
+                    else -> {
+                        // 上传失败
+                        tvUploadStatus.text = "✗ 上传失败 ${formatTime(record.uploadTime)}"
+                        tvUploadStatus.setTextColor(android.graphics.Color.parseColor("#F44336"))
+                    }
+                }
             }
         }
 

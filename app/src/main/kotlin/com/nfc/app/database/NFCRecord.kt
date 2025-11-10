@@ -10,7 +10,12 @@ data class NFCRecord(
     val nfcId: String,
     val cardNumber: String,
     val carNumber: String,
+    val unitName: String = "",
+    val deviceName: String = "",
+    val amount: String = "",
     val readTime: Long,
     val content: String,
-    val uploadStatus: Boolean = false
+    val uploadStatus: Boolean = false,  // false=未上传, true=已上传
+    val uploadTime: Long = 0,           // 上传时间戳
+    val uploadSuccess: Boolean = true   // true=成功, false=失败（仅在uploadStatus=true时有意义）
 )

@@ -17,6 +17,15 @@ interface NFCRecordDao {
     @Query("SELECT * FROM nfc_records WHERE nfcId = :nfcId")
     suspend fun getRecordByNFCId(nfcId: String): List<NFCRecord>
 
+    @Query("SELECT * FROM nfc_records WHERE cardNumber = :cardNumber ORDER BY readTime DESC LIMIT 1")
+    suspend fun getLastRecordByCardNumber(cardNumber: String): NFCRecord?
+
+    @Query("SELECT * FROM nfc_records WHERE cardNumber = :cardNumber ORDER BY readTime DESC")
+    suspend fun getRecordsByCardNumber(cardNumber: String): List<NFCRecord>
+
+    @Query("SELECT * FROM nfc_records WHERE uploadStatus = 0 ORDER BY readTime ASC")
+    suspend fun getUnuploadedRecords(): List<NFCRecord>
+
     @Insert
     suspend fun insert(record: NFCRecord): Long
 
