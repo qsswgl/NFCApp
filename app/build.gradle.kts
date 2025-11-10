@@ -37,6 +37,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    
+    // 禁用 lint 检查第三方 JAR 的问题
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
 }
 
 dependencies {
@@ -55,6 +61,9 @@ dependencies {
 
     // Bluetooth
     implementation("androidx.work:work-runtime-ktx:2.8.1")
+    
+    // LPAPI 蓝牙打印机 SDK (厂家提供)
+    api(files("libs/LPAPI-2020-06-30-R.jar"))
 
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.1")

@@ -39,6 +39,12 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'   // AAR 目录
+    }
+}
+
 dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -54,6 +60,9 @@ dependencies {
 
     // Bluetooth
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
+    
+    // PUQU 蓝牙打印机 SDK (AAR 格式)
+    implementation(name: 'puqu-print_v1.2.0', ext: 'aar')
 
     // RecyclerView
     implementation 'androidx.recyclerview:recyclerview:1.3.1'

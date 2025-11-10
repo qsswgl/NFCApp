@@ -1,0 +1,13 @@
+program PQPrintDLLDemo;
+
+uses
+  Forms,
+  Unt_demo in 'Unt_demo.pas' {Form1};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.

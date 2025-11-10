@@ -1,10 +1,10 @@
 [
     {
-        "merged": "com.nfc.app-mergeDebugResources-41:/layout/activity_main.xml",
-        "source": "com.nfc.app-main-44:/layout/activity_main.xml"
+        "merged": "com.nfc.app-mergeDebugResources-42:/layout/item_record.xml",
+        "source": "com.nfc.app-main-45:/layout/item_record.xml"
     },
     {
-        "merged": "com.nfc.app-mergeDebugResources-41:/layout/item_record.xml",
-        "source": "com.nfc.app-main-44:/layout/item_record.xml"
+        "merged": "com.nfc.app-mergeDebugResources-42:/layout/activity_main.xml",
+        "source": "com.nfc.app-main-45:/layout/activity_main.xml"
     }
 ]

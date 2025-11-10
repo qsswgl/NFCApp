@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Data>
+<Print>
+
+<Tx>5</Tx>   //文本x坐标位置（单位毫米）
+<Ty>20</Ty>  //第一个文本y坐标位置（单位毫米）
+<Clearance>5</Clearance>  //文件之间的间隙大小（单位毫米）
+<font>20</font> //字体大小
+</Print></Data>

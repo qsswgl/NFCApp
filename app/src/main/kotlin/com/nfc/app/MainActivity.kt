@@ -63,10 +63,12 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var recordAdapter: RecordAdapter
     private lateinit var bluetoothPrinter: BluetoothPrinter
     private lateinit var blePrinter: com.nfc.app.print.BLEPrinter
+    private lateinit var puquPrinter: PuQuPrinterManager // PUQU 厂家打印机 SDK
     private lateinit var database: NFCDatabase
     private lateinit var textToSpeech: TextToSpeech
     private var ttsReady = false
     private val BLUETOOTH_PERMISSION_REQUEST = 101
+    private val BLUETOOTH_SCAN_PERMISSION_REQUEST = 104  // 新增：蓝牙扫描权限
     private val PHONE_STATE_PERMISSION_REQUEST = 102
     private val LOCATION_PERMISSION_REQUEST = 103
     
@@ -162,6 +164,55 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             // 初始化 BLE 打印器
             blePrinter = com.nfc.app.print.BLEPrinter(this)
             
+            // 初始化 PUQU 打印器（厂家SDK，自动扫描连接）
+            // 注意: 需要先授予 BLUETOOTH_CONNECT 权限才能初始化
+            try {
+                puquPrinter = PuQuPrinterManager(this)
+                puquPrinter.initialize()
+                puquPrinter.setCallback(object : PuQuPrinterManager.PrinterCallback {
+                    override fun onConnecting(printerName: String) {
+                        runOnUiThread {
+                            Toast.makeText(this@MainActivity, "正在连接: $printerName", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    
+                    override fun onConnected(printerName: String) {
+                        runOnUiThread {
+                            Toast.makeText(this@MainActivity, "✓ 已连接: $printerName", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    
+                    override fun onDisconnected() {
+                        runOnUiThread {
+                            Toast.makeText(this@MainActivity, "打印机已断开", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    
+                    override fun onPrintStart() {
+                        runOnUiThread {
+                        Toast.makeText(this@MainActivity, "🖨️ 开始打印...", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                
+                override fun onPrintSuccess() {
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, "✓ 打印成功！", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                
+                override fun onPrintFailed(error: String) {
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, "❌ 打印失败: $error", Toast.LENGTH_LONG).show()
+                    }
+                }
+            })
+                Log.d(TAG, "PUQU 打印器初始化完成")
+            } catch (e: SecurityException) {
+                // 权限不足时不初始化,等待用户点击打印按钮时再请求权限并初始化
+                Log.w(TAG, "⚠️ 蓝牙权限不足,跳过PUQU打印器初始化 (将在打印时请求权限)")
+                // 不抛出异常,让APP继续启动
+            }
+            
             // 获取视图并保存为成员变量
             tvNfcid = findViewById<TextView>(getResId("tv_nfcid", "id"))
             etCardNumber = findViewById<TextView>(getResId("et_card_number", "id"))
@@ -220,6 +271,78 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             
             btnPrint.setOnClickListener {
+                // Android 12+ 需要检查 BLUETOOTH_CONNECT 和 BLUETOOTH_SCAN 权限
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val neededPermissions = mutableListOf<String>()
+                    
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) 
+                        != PackageManager.PERMISSION_GRANTED) {
+                        neededPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+                    }
+                    
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) 
+                        != PackageManager.PERMISSION_GRANTED) {
+                        neededPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
+                    }
+                    
+                    if (neededPermissions.isNotEmpty()) {
+                        Log.w(TAG, "缺少蓝牙权限: ${neededPermissions.joinToString()}")
+                        ActivityCompat.requestPermissions(
+                            this, 
+                            neededPermissions.toTypedArray(), 
+                            BLUETOOTH_SCAN_PERMISSION_REQUEST
+                        )
+                        Toast.makeText(this, "请授予蓝牙权限后再打印", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+                }
+                
+                // 如果 PUQU 打印器未初始化(之前因权限问题跳过),现在重新初始化
+                if (!::puquPrinter.isInitialized) {
+                    Log.d(TAG, "首次打印,初始化 PUQU 打印器")
+                    try {
+                        puquPrinter = PuQuPrinterManager(this)
+                        puquPrinter.initialize()
+                        puquPrinter.setCallback(object : PuQuPrinterManager.PrinterCallback {
+                            override fun onConnecting(printerName: String) {
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "正在连接: $printerName", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            override fun onConnected(printerName: String) {
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "✓ 已连接: $printerName", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            override fun onDisconnected() {
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "打印机已断开", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            override fun onPrintStart() {
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "开始打印...", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            override fun onPrintSuccess() {
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "✓ 打印成功！", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            override fun onPrintFailed(error: String) {
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "❌ 打印失败: $error", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        })
+                        Log.d(TAG, "✓ PUQU 打印器初始化成功")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "❌ PUQU 打印器初始化失败", e)
+                        Toast.makeText(this, "打印器初始化失败: ${e.message}", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
+                }
+                
                 handlePrint(etCardNumber, etCarNumber, etUnitName, etDeviceName, etAmount)
             }
             
@@ -809,7 +932,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         etDeviceName: EditText,
         etAmount: EditText
     ) {
-        Log.d(TAG, "========== 开始打印流程(优先经典蓝牙) ==========")
+        Log.d(TAG, "========== 开始打印流程(PUQU自动扫描连接) ==========")
 
         // 使用完整号码而不是显示的后4位
         val cardNumber = fullCardNumber.ifEmpty { etCardNumber.text.toString().trim() }
@@ -846,35 +969,38 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         Log.d(TAG, "✓ 输入验证通过")
 
-        // 优先经典蓝牙打印
-        Toast.makeText(this, "🖨️ 正在连接经典蓝牙打印机...", Toast.LENGTH_SHORT).show()
+        // 使用 PUQU 自动扫描、连接、打印
+        Toast.makeText(this, "🖨️ 正在自动连接打印机...", Toast.LENGTH_SHORT).show()
+        
         CoroutineScope(Dispatchers.IO).launch {
-            Log.d(TAG, "进入经典蓝牙打印任务")
-            var classicPrinted = false
-            var classicError: Exception? = null
             try {
-                val connected = bluetoothPrinter.connectToPrinter()
-                Log.d(TAG, "经典蓝牙连接结果: $connected")
-                if (connected) {
-                    Thread.sleep(500)
-                    classicPrinted = bluetoothPrinter.printReceipt(cardNumber, carNumber, unitName, deviceName, amount)
-                    Log.d(TAG, "经典蓝牙打印结果: $classicPrinted")
+                // 自动扫描、连接、打印（一步完成）
+                val success = puquPrinter.autoPrintReceipt(
+                    cardNumber = cardNumber,
+                    carNumber = carNumber,
+                    unitName = unitName,
+                    deviceName = deviceName,
+                    amount = amount,
+                    readTime = System.currentTimeMillis()
+                )
+                
+                withContext(Dispatchers.Main) {
+                    if (success) {
+                        Log.d(TAG, "✓✓✓ PUQU 自动打印成功")
+                        // 保存记录到数据库
+                        saveRecordToDatabase(cardNumber, carNumber, unitName, deviceName, amount)
+                        Toast.makeText(this@MainActivity, "✓ 打印成功！", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.e(TAG, "❌ PUQU 自动打印失败")
+                        // 打印失败，提供备选方案
+                        showPrintFailureDialog(cardNumber, carNumber, unitName, deviceName, amount)
+                    }
                 }
             } catch (e: Exception) {
-                classicError = e
-                Log.e(TAG, "经典蓝牙打印异常", e)
-            }
-
-            withContext(Dispatchers.Main) {
-                if (classicPrinted) {
-                    Log.d(TAG, "✓✓✓ 经典蓝牙打印成功")
-                    saveRecordToDatabase(cardNumber, carNumber, unitName, deviceName, amount)
-                    Toast.makeText(this@MainActivity, "✓ 打印成功！(经典蓝牙)", Toast.LENGTH_SHORT).show()
-                } else {
-                    Log.e(TAG, "❌ 经典蓝牙打印失败，尝试 BLE 打印")
-                    
-                    // 经典蓝牙失败后，尝试 BLE 打印
-                    tryBlePrint(cardNumber, carNumber, unitName, deviceName, amount)
+                Log.e(TAG, "PUQU 打印异常", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "打印异常: ${e.message}", Toast.LENGTH_LONG).show()
+                    showPrintFailureDialog(cardNumber, carNumber, unitName, deviceName, amount)
                 }
             }
         }
@@ -1352,6 +1478,23 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 fullCardNumber = cardNumber
                 Log.d(TAG, "保存到fullCardNumber: $fullCardNumber")
                 
+                // 检查视图是否已初始化,如果未初始化则重新查找
+                if (!::etCardNumber.isInitialized) {
+                    Log.w(TAG, "⚠️ 视图未初始化,重新查找视图")
+                    try {
+                        tvNfcid = findViewById<TextView>(getResId("tv_nfcid", "id"))
+                        etCardNumber = findViewById<TextView>(getResId("et_card_number", "id"))
+                        etUnitName = findViewById<EditText>(getResId("et_unit_name", "id"))
+                        etDeviceName = findViewById<EditText>(getResId("et_device_name", "id"))
+                        tvFuelDate = findViewById<TextView>(getResId("tv_fuel_date", "id"))
+                        Log.d(TAG, "✓ 视图重新初始化成功")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "❌ 视图初始化失败", e)
+                        Toast.makeText(this, "❌ 视图初始化失败,请重启应用", Toast.LENGTH_LONG).show()
+                        return
+                    }
+                }
+                
                 etCardNumber.text = cardNumber  // 显示完整卡号
                 tvNfcid.text = "NFCID: ${cardNumber.take(8)}"
                 Log.d(TAG, "✓ UI已更新: etCardNumber 和 tvNfcid")
@@ -1480,6 +1623,16 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             bluetoothPrinter.disconnect()
         } catch (e: Exception) {
             Log.e(TAG, "Error disconnecting printer", e)
+        }
+        
+        // 释放 PUQU 资源
+        try {
+            if (::puquPrinter.isInitialized) {
+                puquPrinter.release()
+                Log.d(TAG, "PUQU已释放")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error releasing PUQU", e)
         }
     }
     

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.nfc.app-mergeDebugResources-40:/values-en-rGB/values-en-rGB.xml",
+            "outputFile": "com.nfc.app-mergeDebugResources-41:/values-en-rGB/values-en-rGB.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Administrator\\.gradle\\caches\\transforms-3\\fef2914434ca37ac03f74473193f83de\\transformed\\material-1.9.0\\res\\values-en-rGB\\values-en-rGB.xml",

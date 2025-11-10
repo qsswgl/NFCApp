@@ -1,0 +1,54 @@
+<html>
+
+	<head>
+		<title>标签打印</title>
+		<style>
+			td {
+				word-break: break-all;
+				word-wrap: break-word;
+			}
+		</style>
+		<script type="text/javascript" src="code.js"></script>
+	</head>
+
+	<body style="background-color:#DFE8F6">
+		<center>
+			<div style=" text-align:center; margin-top:20px; font-size:12px" id="printnamediv">打印机：
+				<select id="Dtypes" onChange="chage();">
+					<option value="PQ00">PQ00</option>
+				</select>
+			</div>
+
+			<div style=" text-align:center; margin-top:20px; font-size:12px" id="printnamediv">设备类型选择：
+				<select id="Dtype" onChange="chage();">
+					<option value="不干胶标签">不干胶标签</option>
+				</select>
+			</div>
+
+			<br/>
+
+			<br/>
+			<br/>
+		</center>
+		<div id="preview" style=" margin-top:20px"></div>
+		<br>
+
+		<center>
+
+			<button type="button" name="print" onClick="Print();"> 
+			打印
+	</button>
+			<button type="button" name="close" onClick="window.close();">
+			关闭
+	</button>
+			<br>
+			<br>
+			<span style="font-size:12px; font-family:宋体">请使用IE浏览器 <a href="help.rar" target="_blank">使用说用</a></span></center>
+		<script type="text/javascript">
+			var obj = window.dialogArguments;
+			//alert(obj[0].xml);
+			Load(obj[0].xml);
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="puqu"/>
+
+    <version value="38"/>
+
+    <list>
+        <mapping class="com.puqu.print.bean.SaveAlarmClockBean"/>
+        <mapping class="com.puqu.print.bean.SavePrintStyleBean"/>
+        <mapping class="com.puqu.print.bean.SavePrintTicketBean"/>
+        <mapping class="com.puqu.print.bean.PrintLogBean"/>
+    </list>
+</litepal>  

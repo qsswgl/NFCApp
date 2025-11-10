@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_nowdevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_bluetooth"
+                android:layout_width="20dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/icon_bluetooth" />
+
+            <ImageView
+                android:id="@+id/iv_next"
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:src="@mipmap/icon_next" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="15dp"
+                android:layout_toLeftOf="@id/iv_next"
+                android:layout_toRightOf="@id/iv_bluetooth"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="未知蓝牙设备"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:textColor="@color/text2"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_mac"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_marginTop="2dp"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:textColor="@color/text3"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </RelativeLayout>
+        <View
+            android:id="@+id/v_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line3"/>
+    </LinearLayout>
+
+</LinearLayout>
