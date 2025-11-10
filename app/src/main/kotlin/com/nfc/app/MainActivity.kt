@@ -32,6 +32,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nfc.app.database.NFCDatabase
@@ -62,7 +63,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private val TAG = "NFCApp"
     private lateinit var recordAdapter: RecordAdapter
     private lateinit var bluetoothPrinter: BluetoothPrinter
-    private lateinit var blePrinter: com.nfc.app.print.BLEPrinter
     private lateinit var puquPrinter: PuQuPrinterManager // PUQU 厂家打印机 SDK
     private lateinit var database: NFCDatabase
     private lateinit var textToSpeech: TextToSpeech
@@ -161,9 +161,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             // 初始化蓝牙打印机
             bluetoothPrinter = BluetoothPrinter(this)
             
-            // 初始化 BLE 打印器
-            blePrinter = com.nfc.app.print.BLEPrinter(this)
-            
             // 初始化 PUQU 打印器（厂家SDK，自动扫描连接）
             // 注意: 需要先授予 BLUETOOTH_CONNECT 权限才能初始化
             try {
@@ -230,9 +227,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val btnTestPrint = findViewById<LinearLayout?>(getResId("btn_test_print", "id"))
             val btnSelectPrinter = findViewById<LinearLayout?>(getResId("btn_select_printer", "id"))
             val recyclerView = findViewById<RecyclerView>(getResId("recycler_view_records", "id"))
-            // BLE 测试按钮（如果布局中存在）
-            val btnBleScan = findViewById<LinearLayout?>(getResId("btn_ble_scan", "id"))
-            val btnBleTest = findViewById<LinearLayout?>(getResId("btn_ble_test", "id"))
             
             // 初始化日期为今天
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
@@ -407,111 +401,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 } catch (e: Exception) {
                     Log.e(TAG, "选择打印机失败: ${e.message}", e)
                     Toast.makeText(this, "选择打印机失败: ${e.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            btnBleScan?.setOnClickListener {
-                Log.d(TAG, "===== BLE扫描按钮被点击 =====")
-                // 检查定位权限（BLE 扫描依赖）
-                val locationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                } else {
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                }
-                if (ContextCompat.checkSelfPermission(this, locationPermission) != PackageManager.PERMISSION_GRANTED) {
-                    Log.w(TAG, "定位权限未授予,请求权限")
-                    ActivityCompat.requestPermissions(this, arrayOf(locationPermission), LOCATION_PERMISSION_REQUEST)
-                    return@setOnClickListener
-                }
-
-                // 提示用户开启系统定位服务
-                val locationManager = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
-                val locationEnabled = locationManager?.let { mgr ->
-                    val gps = try { mgr.isProviderEnabled(LocationManager.GPS_PROVIDER) } catch (_: Exception) { false }
-                    val network = try { mgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER) } catch (_: Exception) { false }
-                    gps || network
-                } ?: false
-                if (!locationEnabled) {
-                    Log.w(TAG, "系统定位服务未开启")
-                    Toast.makeText(this, "请开启系统定位服务后再扫描 BLE 设备", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-
-                Log.d(TAG, "开始配置 BLE 扫描回调")
-                Toast.makeText(this, "开始扫描 BLE 设备...", Toast.LENGTH_SHORT).show()
-                
-                blePrinter.onDeviceFound = { name, addr ->
-                    Log.d(TAG, "发现设备回调: name=$name, addr=$addr")
-                }
-                blePrinter.onScanComplete = { list ->
-                    // 弹出选择对话框
-                    try {
-                        if (list.isEmpty()) {
-                            Toast.makeText(this, "未找到任何 BLE 设备", Toast.LENGTH_SHORT).show()
-                        } else {
-                            val names = list.map { it.first }.toTypedArray()
-                            AlertDialog.Builder(this)
-                                .setTitle("选择 BLE 设备")
-                                .setItems(names) { _, which ->
-                                    val sel = list[which]
-                                    // 保存为首选（覆盖原 pref）并尝试连接
-                                    val prefs = getSharedPreferences("nfc_prefs", Context.MODE_PRIVATE)
-                                    prefs.edit().putString("pref_printer_address", sel.second).apply()
-                                    Toast.makeText(this, "已选择 BLE 设备: ${sel.first}", Toast.LENGTH_SHORT).show()
-                                    // 连接
-                                    val ok = blePrinter.connect(sel.second)
-                                    if (ok) {
-                                        Toast.makeText(this, "正在连接 BLE 设备，稍后会回调连接状态", Toast.LENGTH_SHORT).show()
-                                    } else {
-                                        Toast.makeText(this, "连接请求发出失败", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                                .setNegativeButton("取消", null)
-                                .show()
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "处理 BLE 扫描结果失败: ${e.message}", e)
-                        Toast.makeText(this, "处理扫描结果失败: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                blePrinter.onError = { err ->
-                    runOnUiThread {
-                        Toast.makeText(this, "BLE 错误: $err", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                blePrinter.onConnected = {
-                    runOnUiThread {
-                        Toast.makeText(this, "BLE 已连接，可执行测试打印", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                blePrinter.onDisconnected = {
-                    runOnUiThread {
-                        Toast.makeText(this, "BLE 已断开", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                // 启动扫描（默认10秒）
-                Log.d(TAG, "调用 scanForPrinters(10000)")
-                blePrinter.scanForPrinters(10000)
-                Log.d(TAG, "scanForPrinters 已调用")
-            }
-
-            btnBleTest?.setOnClickListener {
-                // 发送最小测试内容
-                try {
-                    if (blePrinter.isConnected()) {
-                        val ok = blePrinter.printReceipt("123456", "001", "单位", "设备", "0.01")
-                        if (ok) Toast.makeText(this, "BLE 测试打印已发送", Toast.LENGTH_SHORT).show()
-                        else Toast.makeText(this, "BLE 测试打印失败", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "未连接 BLE 打印机，请先扫描并连接", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "BLE 测试打印异常: ${e.message}", e)
-                    Toast.makeText(this, "BLE 测试异常: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -859,40 +748,72 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     
                     // 刷新列表显示
                     loadRecords()
-                }
-                
-                // 自动打印小票（在后台线程，先连接打印机）
-                Log.d(TAG, "🖨️ 保存成功后自动打印小票...")
-                
-                // 先连接打印机
-                val connected = bluetoothPrinter.connectToPrinter()
-                if (!connected) {
-                    Log.w(TAG, "⚠️ 打印机连接失败")
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@MainActivity, "⚠️ 打印机连接失败", Toast.LENGTH_SHORT).show()
+                    
+                    // 自动打印小票（使用 PUQU SDK）
+                    Log.d(TAG, "🖨️ 保存成功后自动打印小票...")
+                    
+                    // 延迟初始化检查（如果之前未初始化）
+                    if (!::puquPrinter.isInitialized) {
+                        Log.d(TAG, "首次确认打印,初始化 PUQU 打印器")
+                        try {
+                            puquPrinter = PuQuPrinterManager(this@MainActivity)
+                            puquPrinter.initialize()
+                            puquPrinter.setCallback(object : PuQuPrinterManager.PrinterCallback {
+                                override fun onConnecting(printerName: String) {
+                                    runOnUiThread {
+                                        Toast.makeText(this@MainActivity, "正在连接: $printerName", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onConnected(printerName: String) {
+                                    runOnUiThread {
+                                        Toast.makeText(this@MainActivity, "✓ 已连接: $printerName", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onDisconnected() {
+                                    runOnUiThread {
+                                        Toast.makeText(this@MainActivity, "打印机已断开", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onPrintStart() {
+                                    runOnUiThread {
+                                        Toast.makeText(this@MainActivity, "开始打印...", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onPrintSuccess() {
+                                    runOnUiThread {
+                                        Toast.makeText(this@MainActivity, "✓ 确认并打印成功！", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onPrintFailed(error: String) {
+                                    runOnUiThread {
+                                        Toast.makeText(this@MainActivity, "❌ 打印失败: $error", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            })
+                            Log.d(TAG, "✓ PUQU 打印器初始化成功")
+                        } catch (e: Exception) {
+                            Log.e(TAG, "❌ PUQU 打印器初始化失败", e)
+                            Toast.makeText(this@MainActivity, "打印器初始化失败: ${e.message}", Toast.LENGTH_LONG).show()
+                            return@withContext
+                        }
                     }
-                    return@launch
-                }
-                
-                // 延迟确保连接稳定
-                Thread.sleep(300)
-                
-                // 执行打印
-                val printSuccess = bluetoothPrinter.printReceipt(
-                    cardNumber = cardNumber,  // 使用完整号码打印
-                    carNumber = carNumber,    // 使用完整号码打印
-                    unitName = unitName,
-                    deviceName = deviceName,
-                    amount = amount
-                )
-                
-                withContext(Dispatchers.Main) {
-                    if (printSuccess) {
-                        Log.d(TAG, "✓ 自动打印成功")
-                        Toast.makeText(this@MainActivity, "🖨️ 小票已自动打印", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Log.w(TAG, "⚠️ 自动打印失败")
-                        Toast.makeText(this@MainActivity, "⚠️ 打印失败", Toast.LENGTH_SHORT).show()
+                    
+                    // 使用 PUQU SDK 自动打印
+                    lifecycleScope.launch {
+                        val printSuccess = puquPrinter.autoPrintReceipt(
+                            cardNumber = cardNumber,
+                            carNumber = carNumber,
+                            unitName = unitName,
+                            deviceName = deviceName,
+                            amount = amount,
+                            readTime = System.currentTimeMillis()
+                        )
+                        
+                        if (printSuccess) {
+                            Log.d(TAG, "✓ 确认后自动打印成功")
+                        } else {
+                            Log.w(TAG, "⚠️ 确认后自动打印失败")
+                        }
                     }
                 }
             } catch (e: Exception) {
