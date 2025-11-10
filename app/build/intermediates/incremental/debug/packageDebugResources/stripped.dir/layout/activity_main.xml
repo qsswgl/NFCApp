@@ -483,66 +483,6 @@
             android:layout_marginTop="12dp"
             android:weightSum="2">
 
-            <!-- BLE 扫描按钮（调试用） -->
-            <LinearLayout
-                android:id="@+id/btn_ble_scan"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:text="📡"
-                    android:textSize="32sp"
-                    android:gravity="center"
-                    android:background="#E8EAF6"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="BLE扫描"
-                    android:textSize="15sp"
-                    android:textColor="#666666" />
-            </LinearLayout>
-
-            <!-- BLE 测试打印按钮（调试用） -->
-            <LinearLayout
-                android:id="@+id/btn_ble_test"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:text="🧾"
-                    android:textSize="32sp"
-                    android:gravity="center"
-                    android:background="#FFFDE7"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="BLE测试"
-                    android:textSize="15sp"
-                    android:textColor="#666666" />
-            </LinearLayout>
-
         </LinearLayout>
 
         <!-- 记录列表标题 -->

@@ -13,8 +13,6 @@ drawable ic_read
 drawable ic_upload
 drawable ic_write
 drawable logo_coffee
-id btn_ble_scan
-id btn_ble_test
 id btn_confirm
 id btn_print
 id btn_read

@@ -22,12 +22,6 @@ public final class ActivityMainBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final LinearLayout btnBleScan;
-
-  @NonNull
-  public final LinearLayout btnBleTest;
-
-  @NonNull
   public final LinearLayout btnConfirm;
 
   @NonNull
@@ -72,8 +66,7 @@ public final class ActivityMainBinding implements ViewBinding {
   @NonNull
   public final TextView tvNfcid;
 
-  private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull LinearLayout btnBleScan,
-      @NonNull LinearLayout btnBleTest, @NonNull LinearLayout btnConfirm,
+  private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull LinearLayout btnConfirm,
       @NonNull LinearLayout btnPrint, @NonNull LinearLayout btnRead,
       @NonNull LinearLayout btnSelectPrinter, @NonNull LinearLayout btnTestPrint,
       @NonNull LinearLayout btnUpload, @NonNull LinearLayout btnWrite, @NonNull EditText etAmount,
@@ -81,8 +74,6 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull EditText etUnitName, @NonNull RecyclerView recyclerViewRecords,
       @NonNull TextView tvFuelDate, @NonNull TextView tvNfcid) {
     this.rootView = rootView;
-    this.btnBleScan = btnBleScan;
-    this.btnBleTest = btnBleTest;
     this.btnConfirm = btnConfirm;
     this.btnPrint = btnPrint;
     this.btnRead = btnRead;
@@ -127,18 +118,6 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.btn_ble_scan;
-      LinearLayout btnBleScan = ViewBindings.findChildViewById(rootView, id);
-      if (btnBleScan == null) {
-        break missingId;
-      }
-
-      id = R.id.btn_ble_test;
-      LinearLayout btnBleTest = ViewBindings.findChildViewById(rootView, id);
-      if (btnBleTest == null) {
-        break missingId;
-      }
-
       id = R.id.btn_confirm;
       LinearLayout btnConfirm = ViewBindings.findChildViewById(rootView, id);
       if (btnConfirm == null) {
@@ -229,10 +208,9 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((LinearLayout) rootView, btnBleScan, btnBleTest, btnConfirm,
-          btnPrint, btnRead, btnSelectPrinter, btnTestPrint, btnUpload, btnWrite, etAmount,
-          etCarNumber, etCardNumber, etDeviceName, etUnitName, recyclerViewRecords, tvFuelDate,
-          tvNfcid);
+      return new ActivityMainBinding((LinearLayout) rootView, btnConfirm, btnPrint, btnRead,
+          btnSelectPrinter, btnTestPrint, btnUpload, btnWrite, etAmount, etCarNumber, etCardNumber,
+          etDeviceName, etUnitName, recyclerViewRecords, tvFuelDate, tvNfcid);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

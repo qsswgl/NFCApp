@@ -3121,8 +3121,6 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
-id btn_ble_scan
-id btn_ble_test
 id btn_confirm
 id btn_print
 id btn_read
