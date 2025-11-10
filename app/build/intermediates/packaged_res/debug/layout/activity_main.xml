@@ -2,95 +2,268 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <!-- 标题 -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="NFC 读写系统"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
-        android:layout_marginBottom="16dp" />
-
-    <!-- NFC信息显示区 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#F5F5F5"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp">
-
-        <TextView
-            android:id="@+id/tv_nfcid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="NFCID: 待读取"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="卡号"
-            android:textSize="13sp"
-            android:textColor="#666666"
-            android:layout_marginBottom="6dp" />
-
-        <EditText
-            android:id="@+id/et_card_number"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="请输入卡号"
-            android:textColorHint="#AAAAAA"
-            android:inputType="text"
-            android:background="@android:color/white"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:textSize="15sp"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="车号"
-            android:textSize="13sp"
-            android:textColor="#666666"
-            android:layout_marginBottom="6dp" />
-
-        <EditText
-            android:id="@+id/et_car_number"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="请输入车号"
-            android:textColorHint="#AAAAAA"
-            android:inputType="text"
-            android:background="@android:color/white"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:textSize="15sp"
-            android:layout_marginBottom="8dp" />
-    </LinearLayout>
-
-    <!-- 按钮区 - 卡片式设计 -->
+    <!-- 标题 - 带咖啡杯LOGO -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:weightSum="4">
+        android:padding="16dp"
+        android:background="#FFFFFF">
 
-        <!-- 写入按钮 -->
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/logo_coffee"
+            android:scaleType="fitCenter"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⛽ 加油刷卡"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333" />
+    </LinearLayout>
+
+    <!-- 可滚动内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- NFC信息显示区 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#F5F5F5"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_nfcid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="NFCID: 待读取"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:visibility="gone" />
+
+        <!-- 卡号：标题和内容在一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="卡号："
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginEnd="8dp" />
+            
+            <TextView
+                android:id="@+id/et_card_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="请先读卡"
+                android:textColorHint="#AAAAAA"
+                android:text=""
+                android:textSize="15sp"
+                android:textColor="#333333"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- 机号：标题和内容在一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="机号："
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginEnd="8dp" />
+            
+            <TextView
+                android:id="@+id/et_car_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="自动获取中..."
+                android:text=""
+                android:textColorHint="#AAAAAA"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- 单位名称：标题和输入框在一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="单位名称："
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginEnd="8dp" />
+            
+            <EditText
+                android:id="@+id/et_unit_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="请输入单位名称"
+                android:textColorHint="#AAAAAA"
+                android:inputType="text"
+                android:textSize="15sp"
+                android:background="@null"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- 设备名称：标题和输入框在一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设备名称："
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginEnd="8dp" />
+            
+            <EditText
+                android:id="@+id/et_device_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="请输入设备名称"
+                android:textColorHint="#AAAAAA"
+                android:inputType="text"
+                android:textSize="15sp"
+                android:background="@null"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- 消费金额：标题和输入框在一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="消费金额："
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginEnd="8dp" />
+            
+            <EditText
+                android:id="@+id/et_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="请输入消费金额"
+                android:textColorHint="#AAAAAA"
+                android:inputType="numberDecimal"
+                android:digits="0123456789."
+                android:imeOptions="actionDone"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:background="@null"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- 加油时间：标题和日期选择在一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加油时间："
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginEnd="8dp" />
+            
+            <TextView
+                android:id="@+id/tv_fuel_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textSize="15sp"
+                android:textColor="#333333"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:padding="8dp" />
+        </LinearLayout>
+        </LinearLayout>
+
+        <!-- 按钮区 - 卡片式设计 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:weightSum="3">
+
+        <!-- 写入按钮（隐藏） -->
         <LinearLayout
             android:id="@+id/btn_write"
             android:layout_width="0dp"
@@ -101,7 +274,8 @@
             android:padding="12dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:visibility="gone">
             
             <TextView
                 android:layout_width="56dp"
@@ -116,11 +290,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="写入"
-                android:textSize="12sp"
+                android:textSize="15sp"
                 android:textColor="#666666" />
         </LinearLayout>
 
-        <!-- 读取按钮 -->
+        <!-- 读取按钮（隐藏） -->
         <LinearLayout
             android:id="@+id/btn_read"
             android:layout_width="0dp"
@@ -131,7 +305,8 @@
             android:padding="12dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:visibility="gone">
             
             <TextView
                 android:layout_width="56dp"
@@ -146,7 +321,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="读取"
-                android:textSize="12sp"
+                android:textSize="15sp"
                 android:textColor="#666666" />
         </LinearLayout>
 
@@ -176,7 +351,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="打印"
-                android:textSize="12sp"
+                android:textSize="15sp"
+                android:textColor="#666666" />
+        </LinearLayout>
+
+        <!-- 确认按钮 -->
+        <LinearLayout
+            android:id="@+id/btn_confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+            
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="✔️"
+                android:textSize="32sp"
+                android:gravity="center"
+                android:background="#C8E6C9"
+                android:layout_marginBottom="4dp" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="确认"
+                android:textSize="15sp"
                 android:textColor="#666666" />
         </LinearLayout>
 
@@ -206,27 +411,160 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="上传"
-                android:textSize="12sp"
+                android:textSize="15sp"
+                android:textColor="#666666" />
+            </LinearLayout>
+        
+        <!-- 临时测试打印按钮（仅用于调试） -->
+        <LinearLayout
+            android:id="@+id/btn_test_print"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+            
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="🧪"
+                android:textSize="32sp"
+                android:gravity="center"
+                android:background="#E0F7FA"
+                android:layout_marginBottom="4dp" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="测试打印"
+                android:textSize="15sp"
                 android:textColor="#666666" />
         </LinearLayout>
-    </LinearLayout>
+        <!-- 选择打印机按钮：在App内锁定首选打印机，避免系统或厂商App抢占 -->
+        <LinearLayout
+            android:id="@+id/btn_select_printer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
 
-    <!-- 记录列表 -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📋 读写记录"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="�"
+                android:textSize="28sp"
+                android:gravity="center"
+                android:background="#FFFDE7"
+                android:layout_marginBottom="4dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_records"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#FAFAFA" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选择打印机"
+                android:textSize="13sp"
+                android:textColor="#666666" />
+        </LinearLayout>
+        </LinearLayout>
+
+        <!-- BLE 调试按钮单独一行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:weightSum="2">
+
+            <!-- BLE 扫描按钮（调试用） -->
+            <LinearLayout
+                android:id="@+id/btn_ble_scan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:text="📡"
+                    android:textSize="32sp"
+                    android:gravity="center"
+                    android:background="#E8EAF6"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BLE扫描"
+                    android:textSize="15sp"
+                    android:textColor="#666666" />
+            </LinearLayout>
+
+            <!-- BLE 测试打印按钮（调试用） -->
+            <LinearLayout
+                android:id="@+id/btn_ble_test"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:text="🧾"
+                    android:textSize="32sp"
+                    android:gravity="center"
+                    android:background="#FFFDE7"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BLE测试"
+                    android:textSize="15sp"
+                    android:textColor="#666666" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 记录列表标题 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📋 刷卡记录"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="8dp" />
+
+        <!-- 记录列表 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_records"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="#FAFAFA"
+            android:layout_marginBottom="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

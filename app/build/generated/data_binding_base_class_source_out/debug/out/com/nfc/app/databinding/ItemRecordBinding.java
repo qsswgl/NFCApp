@@ -20,6 +20,9 @@ public final class ItemRecordBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final TextView tvAmount;
+
+  @NonNull
   public final TextView tvCarNumber;
 
   @NonNull
@@ -29,20 +32,34 @@ public final class ItemRecordBinding implements ViewBinding {
   public final TextView tvContent;
 
   @NonNull
+  public final TextView tvDeviceName;
+
+  @NonNull
   public final TextView tvNfcid;
 
   @NonNull
   public final TextView tvTime;
 
-  private ItemRecordBinding(@NonNull LinearLayout rootView, @NonNull TextView tvCarNumber,
-      @NonNull TextView tvCardNumber, @NonNull TextView tvContent, @NonNull TextView tvNfcid,
-      @NonNull TextView tvTime) {
+  @NonNull
+  public final TextView tvUnitName;
+
+  @NonNull
+  public final TextView tvUploadStatus;
+
+  private ItemRecordBinding(@NonNull LinearLayout rootView, @NonNull TextView tvAmount,
+      @NonNull TextView tvCarNumber, @NonNull TextView tvCardNumber, @NonNull TextView tvContent,
+      @NonNull TextView tvDeviceName, @NonNull TextView tvNfcid, @NonNull TextView tvTime,
+      @NonNull TextView tvUnitName, @NonNull TextView tvUploadStatus) {
     this.rootView = rootView;
+    this.tvAmount = tvAmount;
     this.tvCarNumber = tvCarNumber;
     this.tvCardNumber = tvCardNumber;
     this.tvContent = tvContent;
+    this.tvDeviceName = tvDeviceName;
     this.tvNfcid = tvNfcid;
     this.tvTime = tvTime;
+    this.tvUnitName = tvUnitName;
+    this.tvUploadStatus = tvUploadStatus;
   }
 
   @Override
@@ -72,6 +89,12 @@ public final class ItemRecordBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.tv_amount;
+      TextView tvAmount = ViewBindings.findChildViewById(rootView, id);
+      if (tvAmount == null) {
+        break missingId;
+      }
+
       id = R.id.tv_car_number;
       TextView tvCarNumber = ViewBindings.findChildViewById(rootView, id);
       if (tvCarNumber == null) {
@@ -90,6 +113,12 @@ public final class ItemRecordBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_device_name;
+      TextView tvDeviceName = ViewBindings.findChildViewById(rootView, id);
+      if (tvDeviceName == null) {
+        break missingId;
+      }
+
       id = R.id.tv_nfcid;
       TextView tvNfcid = ViewBindings.findChildViewById(rootView, id);
       if (tvNfcid == null) {
@@ -102,8 +131,20 @@ public final class ItemRecordBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemRecordBinding((LinearLayout) rootView, tvCarNumber, tvCardNumber, tvContent,
-          tvNfcid, tvTime);
+      id = R.id.tv_unit_name;
+      TextView tvUnitName = ViewBindings.findChildViewById(rootView, id);
+      if (tvUnitName == null) {
+        break missingId;
+      }
+
+      id = R.id.tv_upload_status;
+      TextView tvUploadStatus = ViewBindings.findChildViewById(rootView, id);
+      if (tvUploadStatus == null) {
+        break missingId;
+      }
+
+      return new ItemRecordBinding((LinearLayout) rootView, tvAmount, tvCarNumber, tvCardNumber,
+          tvContent, tvDeviceName, tvNfcid, tvTime, tvUnitName, tvUploadStatus);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -2,13 +2,38 @@ package com.nfc.app;
 
 import java.lang.System;
 
-@kotlin.Metadata(mv = {1, 8, 0}, k = 1, d1 = {"\u0000,\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u000e\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u0002\n\u0000\n\u0002\u0010\b\n\u0002\b\u0005\n\u0002\u0018\u0002\n\u0000\u0018\u00002\u00020\u0001B\u0005\u00a2\u0006\u0002\u0010\u0002J\b\u0010\u0007\u001a\u00020\bH\u0002J\u0018\u0010\t\u001a\u00020\n2\u0006\u0010\u000b\u001a\u00020\u00042\u0006\u0010\f\u001a\u00020\u0004H\u0002J\b\u0010\r\u001a\u00020\bH\u0002J\u0012\u0010\u000e\u001a\u00020\b2\b\u0010\u000f\u001a\u0004\u0018\u00010\u0010H\u0014R\u000e\u0010\u0003\u001a\u00020\u0004X\u0082D\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0005\u001a\u00020\u0006X\u0082.\u00a2\u0006\u0002\n\u0000\u00a8\u0006\u0011"}, d2 = {"Lcom/nfc/app/MainActivity;", "Landroidx/appcompat/app/AppCompatActivity;", "()V", "TAG", "", "recordAdapter", "Lcom/nfc/app/ui/RecordAdapter;", "createFallbackLayout", "", "getResId", "", "name", "type", "initializeComponents", "onCreate", "savedInstanceState", "Landroid/os/Bundle;", "app_debug"})
-public final class MainActivity extends androidx.appcompat.app.AppCompatActivity {
+@kotlin.Metadata(mv = {1, 8, 0}, k = 1, d1 = {"\u0000\u00a6\u0001\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\b\n\u0002\b\u0003\n\u0002\u0010\u000e\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0005\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u0011\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\b\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0011\n\u0002\u0018\u0002\n\u0002\b\u0005\n\u0002\u0018\u0002\n\u0002\b\u0005\n\u0002\u0010\u0015\n\u0002\b\u0014\u0018\u00002\u00020\u00012\u00020\u0002B\u0005\u00a2\u0006\u0002\u0010\u0003J\'\u0010,\u001a\u0010\u0012\u0004\u0012\u00020)\u0012\u0006\u0012\u0004\u0018\u00010.0-2\u0006\u0010/\u001a\u00020\tH\u0082@\u00f8\u0001\u0000\u00a2\u0006\u0002\u00100J)\u00101\u001a\u00020)2\u0006\u00102\u001a\u00020\t2\u0006\u0010/\u001a\u00020\t2\u0006\u00103\u001a\u00020\tH\u0082@\u00f8\u0001\u0000\u00a2\u0006\u0002\u00104J\u0019\u00105\u001a\u00020)2\u0006\u00106\u001a\u000207H\u0082@\u00f8\u0001\u0000\u00a2\u0006\u0002\u00108J\b\u00109\u001a\u00020:H\u0002J\u0010\u0010;\u001a\u00020\t2\u0006\u0010<\u001a\u00020\tH\u0002J\u0010\u0010=\u001a\u00020:2\u0006\u0010>\u001a\u00020\u0011H\u0002J\u0018\u0010?\u001a\u00020\u00052\u0006\u0010@\u001a\u00020\t2\u0006\u0010A\u001a\u00020\tH\u0002J0\u0010B\u001a\u00020:2\u0006\u0010\u0010\u001a\u00020\u00112\u0006\u0010>\u001a\u00020\u00112\u0006\u0010\u0014\u001a\u00020\u00132\u0006\u0010\u0012\u001a\u00020\u00132\u0006\u0010C\u001a\u00020\u0013H\u0002J0\u0010D\u001a\u00020:2\u0006\u0010\u0010\u001a\u00020\u00112\u0006\u0010>\u001a\u00020\u00112\u0006\u0010\u0014\u001a\u00020\u00132\u0006\u0010\u0012\u001a\u00020\u00132\u0006\u0010C\u001a\u00020\u0013H\u0002J(\u0010E\u001a\u00020:2\u0006\u0010\u0010\u001a\u00020\u00112\u0006\u0010+\u001a\u00020\u00112\u0006\u0010\u0014\u001a\u00020\u00132\u0006\u0010\u0012\u001a\u00020\u0013H\u0002J\b\u0010F\u001a\u00020:H\u0002J\b\u0010G\u001a\u00020:H\u0002J\b\u0010H\u001a\u00020:H\u0002J\b\u0010I\u001a\u00020:H\u0002J\u0012\u0010J\u001a\u00020:2\b\u0010K\u001a\u0004\u0018\u00010LH\u0014J\b\u0010M\u001a\u00020:H\u0014J\u0010\u0010N\u001a\u00020:2\u0006\u0010O\u001a\u00020\u0005H\u0016J\u0012\u0010P\u001a\u00020:2\b\u0010Q\u001a\u0004\u0018\u00010RH\u0014J\b\u0010S\u001a\u00020:H\u0014J-\u0010T\u001a\u00020:2\u0006\u0010U\u001a\u00020\u00052\u000e\u0010V\u001a\n\u0012\u0006\b\u0001\u0012\u00020\t0\u001b2\u0006\u0010W\u001a\u00020XH\u0016\u00a2\u0006\u0002\u0010YJ\b\u0010Z\u001a\u00020:H\u0014J\b\u0010[\u001a\u00020:H\u0002J\b\u0010\\\u001a\u00020:H\u0002J\b\u0010]\u001a\u00020:H\u0002J0\u0010^\u001a\u00020:2\u0006\u0010_\u001a\u00020\t2\u0006\u0010`\u001a\u00020\t2\u0006\u0010a\u001a\u00020\t2\u0006\u0010b\u001a\u00020\t2\u0006\u0010c\u001a\u00020\tH\u0002J\b\u0010d\u001a\u00020:H\u0002J0\u0010e\u001a\u00020:2\u0006\u0010_\u001a\u00020\t2\u0006\u0010`\u001a\u00020\t2\u0006\u0010a\u001a\u00020\t2\u0006\u0010b\u001a\u00020\t2\u0006\u0010c\u001a\u00020\tH\u0002J\u0010\u0010f\u001a\u00020:2\u0006\u0010g\u001a\u00020\tH\u0002J\b\u0010h\u001a\u00020:H\u0002J0\u0010i\u001a\u00020:2\u0006\u0010_\u001a\u00020\t2\u0006\u0010`\u001a\u00020\t2\u0006\u0010a\u001a\u00020\t2\u0006\u0010b\u001a\u00020\t2\u0006\u0010c\u001a\u00020\tH\u0002J0\u0010j\u001a\u00020:2\u0006\u0010_\u001a\u00020\t2\u0006\u0010`\u001a\u00020\t2\u0006\u0010a\u001a\u00020\t2\u0006\u0010b\u001a\u00020\t2\u0006\u0010c\u001a\u00020\tH\u0002J\u0010\u0010k\u001a\u00020:2\u0006\u0010>\u001a\u00020\u0011H\u0002R\u000e\u0010\u0004\u001a\u00020\u0005X\u0082D\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0006\u001a\u00020\u0005X\u0082D\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0007\u001a\u00020\u0005X\u0082D\u00a2\u0006\u0002\n\u0000R\u000e\u0010\b\u001a\u00020\tX\u0082D\u00a2\u0006\u0002\n\u0000R\u000e\u0010\n\u001a\u00020\u000bX\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010\f\u001a\u00020\rX\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u000e\u001a\u00020\u000fX\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0010\u001a\u00020\u0011X\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0012\u001a\u00020\u0013X\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0014\u001a\u00020\u0013X\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0015\u001a\u00020\tX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0016\u001a\u00020\tX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0017\u001a\u00020\tX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0018\u001a\u00020\u0019X\u0082\u0004\u00a2\u0006\u0002\n\u0000R\u0018\u0010\u001a\u001a\n\u0012\u0004\u0012\u00020\u001c\u0018\u00010\u001bX\u0082\u000e\u00a2\u0006\u0004\n\u0002\u0010\u001dR\u0010\u0010\u001e\u001a\u0004\u0018\u00010\u001fX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u0010\u0010 \u001a\u0004\u0018\u00010!X\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u000e\u0010\"\u001a\u00020#X\u0082.\u00a2\u0006\u0002\n\u0000R\u001e\u0010$\u001a\u0010\u0012\n\u0012\b\u0012\u0004\u0012\u00020\t0\u001b\u0018\u00010\u001bX\u0082\u000e\u00a2\u0006\u0004\n\u0002\u0010%R\u000e\u0010&\u001a\u00020\'X\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010(\u001a\u00020)X\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u000e\u0010*\u001a\u00020\u0011X\u0082.\u00a2\u0006\u0002\n\u0000R\u000e\u0010+\u001a\u00020\u0011X\u0082.\u00a2\u0006\u0002\n\u0000\u0082\u0002\u0004\n\u0002\b\u0019\u00a8\u0006l"}, d2 = {"Lcom/nfc/app/MainActivity;", "Landroidx/appcompat/app/AppCompatActivity;", "Landroid/speech/tts/TextToSpeech$OnInitListener;", "()V", "BLUETOOTH_PERMISSION_REQUEST", "", "LOCATION_PERMISSION_REQUEST", "PHONE_STATE_PERMISSION_REQUEST", "TAG", "", "blePrinter", "Lcom/nfc/app/print/BLEPrinter;", "bluetoothPrinter", "Lcom/nfc/app/print/BluetoothPrinter;", "database", "Lcom/nfc/app/database/NFCDatabase;", "etCardNumber", "Landroid/widget/TextView;", "etDeviceName", "Landroid/widget/EditText;", "etUnitName", "fuelDate", "fullCarNumber", "fullCardNumber", "httpClient", "Lokhttp3/OkHttpClient;", "intentFilters", "", "Landroid/content/IntentFilter;", "[Landroid/content/IntentFilter;", "nfcAdapter", "Landroid/nfc/NfcAdapter;", "pendingIntent", "Landroid/app/PendingIntent;", "recordAdapter", "Lcom/nfc/app/ui/RecordAdapter;", "techLists", "[[Ljava/lang/String;", "textToSpeech", "Landroid/speech/tts/TextToSpeech;", "ttsReady", "", "tvFuelDate", "tvNfcid", "callFindAPI", "Lkotlin/Pair;", "Lorg/json/JSONObject;", "memo", "(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "callInsertAPI", "className", "shunXu", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "callUploadRecordAPI", "record", "Lcom/nfc/app/database/NFCRecord;", "(Lcom/nfc/app/database/NFCRecord;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "createFallbackLayout", "", "formatDisplayNumber", "number", "getPhoneNumber", "etCarNumber", "getResId", "name", "type", "handleConfirm", "etAmount", "handlePrint", "handleReadCard", "handleUpload", "initializeComponents", "initializeNFC", "loadRecords", "onCreate", "savedInstanceState", "Landroid/os/Bundle;", "onDestroy", "onInit", "status", "onNewIntent", "intent", "Landroid/content/Intent;", "onPause", "onRequestPermissionsResult", "requestCode", "permissions", "grantResults", "", "(I[Ljava/lang/String;[I)V", "onResume", "requestBluetoothPermissions", "requestLocationPermission", "requestPhoneStatePermission", "saveRecordToDatabase", "cardNumber", "carNumber", "unitName", "deviceName", "amount", "showDatePickerDialog", "showPrintFailureDialog", "speak", "text", "startBleScan", "tryBlePrint", "tryClassicBluetoothPrint", "useDeviceIdAsMachineNumber", "app_debug"})
+public final class MainActivity extends androidx.appcompat.app.AppCompatActivity implements android.speech.tts.TextToSpeech.OnInitListener {
     private final java.lang.String TAG = "NFCApp";
     private com.nfc.app.ui.RecordAdapter recordAdapter;
+    private com.nfc.app.print.BluetoothPrinter bluetoothPrinter;
+    private com.nfc.app.print.BLEPrinter blePrinter;
+    private com.nfc.app.database.NFCDatabase database;
+    private android.speech.tts.TextToSpeech textToSpeech;
+    private boolean ttsReady = false;
+    private final int BLUETOOTH_PERMISSION_REQUEST = 101;
+    private final int PHONE_STATE_PERMISSION_REQUEST = 102;
+    private final int LOCATION_PERMISSION_REQUEST = 103;
+    private android.nfc.NfcAdapter nfcAdapter;
+    private android.app.PendingIntent pendingIntent;
+    private android.content.IntentFilter[] intentFilters;
+    private java.lang.String[][] techLists;
+    private android.widget.TextView tvNfcid;
+    private android.widget.TextView etCardNumber;
+    private android.widget.EditText etUnitName;
+    private android.widget.EditText etDeviceName;
+    private android.widget.TextView tvFuelDate;
+    private java.lang.String fullCardNumber = "";
+    private java.lang.String fullCarNumber = "";
+    private java.lang.String fuelDate = "";
+    private final okhttp3.OkHttpClient httpClient = null;
     
     public MainActivity() {
         super();
+    }
+    
+    private final java.lang.String formatDisplayNumber(java.lang.String number) {
+        return null;
     }
     
     @java.lang.Override
@@ -17,6 +42,167 @@ public final class MainActivity extends androidx.appcompat.app.AppCompatActivity
     }
     
     private final void initializeComponents() {
+    }
+    
+    /**
+     * 初始化NFC适配器和前台调度系统
+     */
+    private final void initializeNFC() {
+    }
+    
+    /**
+     * 获取手机号码并绑定到机号
+     */
+    private final void getPhoneNumber(android.widget.TextView etCarNumber) {
+    }
+    
+    /**
+     * 使用设备ID作为机号
+     */
+    private final void useDeviceIdAsMachineNumber(android.widget.TextView etCarNumber) {
+    }
+    
+    /**
+     * 处理读卡操作
+     */
+    private final void handleReadCard(android.widget.TextView etCardNumber, android.widget.TextView tvNfcid, android.widget.EditText etUnitName, android.widget.EditText etDeviceName) {
+    }
+    
+    /**
+     * 处理确认操作 - 保存数据到数据库
+     */
+    private final void handleConfirm(android.widget.TextView etCardNumber, android.widget.TextView etCarNumber, android.widget.EditText etUnitName, android.widget.EditText etDeviceName, android.widget.EditText etAmount) {
+    }
+    
+    /**
+     * 加载历史记录
+     */
+    private final void loadRecords() {
+    }
+    
+    /**
+     * 处理打印操作 - 使用BLE模式
+     */
+    private final void handlePrint(android.widget.TextView etCardNumber, android.widget.TextView etCarNumber, android.widget.EditText etUnitName, android.widget.EditText etDeviceName, android.widget.EditText etAmount) {
+    }
+    
+    /**
+     * 尝试使用 BLE 打印
+     */
+    private final void tryBlePrint(java.lang.String cardNumber, java.lang.String carNumber, java.lang.String unitName, java.lang.String deviceName, java.lang.String amount) {
+    }
+    
+    /**
+     * 开始 BLE 扫描
+     */
+    private final void startBleScan() {
+    }
+    
+    /**
+     * 显示打印失败对话框
+     */
+    private final void showPrintFailureDialog(java.lang.String cardNumber, java.lang.String carNumber, java.lang.String unitName, java.lang.String deviceName, java.lang.String amount) {
+    }
+    
+    /**
+     * 尝试经典蓝牙打印
+     */
+    private final void tryClassicBluetoothPrint(java.lang.String cardNumber, java.lang.String carNumber, java.lang.String unitName, java.lang.String deviceName, java.lang.String amount) {
+    }
+    
+    /**
+     * 处理上传操作
+     */
+    private final void handleUpload() {
+    }
+    
+    /**
+     * 请求蓝牙权限
+     */
+    private final void requestBluetoothPermissions() {
+    }
+    
+    /**
+     * 请求读取手机状态权限
+     */
+    private final void requestPhoneStatePermission() {
+    }
+    
+    private final void requestLocationPermission() {
+    }
+    
+    /**
+     * 保存记录到数据库
+     */
+    private final void saveRecordToDatabase(java.lang.String cardNumber, java.lang.String carNumber, java.lang.String unitName, java.lang.String deviceName, java.lang.String amount) {
+    }
+    
+    @java.lang.Override
+    public void onRequestPermissionsResult(int requestCode, @org.jetbrains.annotations.NotNull
+    java.lang.String[] permissions, @org.jetbrains.annotations.NotNull
+    int[] grantResults) {
+    }
+    
+    @java.lang.Override
+    protected void onResume() {
+    }
+    
+    @java.lang.Override
+    protected void onPause() {
+    }
+    
+    /**
+     * 处理NFC标签检测事件（自动读卡）
+     */
+    @java.lang.Override
+    protected void onNewIntent(@org.jetbrains.annotations.Nullable
+    android.content.Intent intent) {
+    }
+    
+    @java.lang.Override
+    protected void onDestroy() {
+    }
+    
+    /**
+     * TextToSpeech初始化回调
+     */
+    @java.lang.Override
+    public void onInit(int status) {
+    }
+    
+    /**
+     * 语音播报
+     */
+    private final void speak(java.lang.String text) {
+    }
+    
+    /**
+     * 显示日期选择对话框
+     */
+    private final void showDatePickerDialog() {
+    }
+    
+    /**
+     * 调用API接口录入新卡信息
+     */
+    private final java.lang.Object callInsertAPI(java.lang.String className, java.lang.String memo, java.lang.String shunXu, kotlin.coroutines.Continuation<? super java.lang.Boolean> continuation) {
+        return null;
+    }
+    
+    /**
+     * 调用API接口查询卡信息
+     * @return Pair<成功标志, 数据对象或null>
+     */
+    private final java.lang.Object callFindAPI(java.lang.String memo, kotlin.coroutines.Continuation<? super kotlin.Pair<java.lang.Boolean, ? extends org.json.JSONObject>> continuation) {
+        return null;
+    }
+    
+    /**
+     * 调用API接口上传单条记录
+     * @return 是否上传成功
+     */
+    private final java.lang.Object callUploadRecordAPI(com.nfc.app.database.NFCRecord record, kotlin.coroutines.Continuation<? super java.lang.Boolean> continuation) {
+        return null;
     }
     
     private final int getResId(java.lang.String name, java.lang.String type) {

@@ -36,12 +36,12 @@ public final class NFCDatabase_Impl extends NFCDatabase {
 
   @Override
   protected SupportSQLiteOpenHelper createOpenHelper(DatabaseConfiguration configuration) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(configuration, new RoomOpenHelper.Delegate(1) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(configuration, new RoomOpenHelper.Delegate(3) {
       @Override
       public void createAllTables(SupportSQLiteDatabase _db) {
-        _db.execSQL("CREATE TABLE IF NOT EXISTS `nfc_records` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nfcId` TEXT NOT NULL, `cardNumber` TEXT NOT NULL, `carNumber` TEXT NOT NULL, `readTime` INTEGER NOT NULL, `content` TEXT NOT NULL, `uploadStatus` INTEGER NOT NULL)");
+        _db.execSQL("CREATE TABLE IF NOT EXISTS `nfc_records` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nfcId` TEXT NOT NULL, `cardNumber` TEXT NOT NULL, `carNumber` TEXT NOT NULL, `unitName` TEXT NOT NULL, `deviceName` TEXT NOT NULL, `amount` TEXT NOT NULL, `readTime` INTEGER NOT NULL, `content` TEXT NOT NULL, `uploadStatus` INTEGER NOT NULL, `uploadTime` INTEGER NOT NULL, `uploadSuccess` INTEGER NOT NULL)");
         _db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        _db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3bea707eb4dc068f3b478586e6f46060')");
+        _db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6fb6a72764d60506145ce117d7db3bca')");
       }
 
       @Override
@@ -85,14 +85,19 @@ public final class NFCDatabase_Impl extends NFCDatabase {
 
       @Override
       public RoomOpenHelper.ValidationResult onValidateSchema(SupportSQLiteDatabase _db) {
-        final HashMap<String, TableInfo.Column> _columnsNfcRecords = new HashMap<String, TableInfo.Column>(7);
+        final HashMap<String, TableInfo.Column> _columnsNfcRecords = new HashMap<String, TableInfo.Column>(12);
         _columnsNfcRecords.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsNfcRecords.put("nfcId", new TableInfo.Column("nfcId", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsNfcRecords.put("cardNumber", new TableInfo.Column("cardNumber", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsNfcRecords.put("carNumber", new TableInfo.Column("carNumber", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsNfcRecords.put("unitName", new TableInfo.Column("unitName", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsNfcRecords.put("deviceName", new TableInfo.Column("deviceName", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsNfcRecords.put("amount", new TableInfo.Column("amount", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsNfcRecords.put("readTime", new TableInfo.Column("readTime", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsNfcRecords.put("content", new TableInfo.Column("content", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsNfcRecords.put("uploadStatus", new TableInfo.Column("uploadStatus", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsNfcRecords.put("uploadTime", new TableInfo.Column("uploadTime", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsNfcRecords.put("uploadSuccess", new TableInfo.Column("uploadSuccess", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysNfcRecords = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesNfcRecords = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoNfcRecords = new TableInfo("nfc_records", _columnsNfcRecords, _foreignKeysNfcRecords, _indicesNfcRecords);
@@ -104,7 +109,7 @@ public final class NFCDatabase_Impl extends NFCDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "3bea707eb4dc068f3b478586e6f46060", "fb13f7c9298f2fc7e8d1ce0b39bc2aea");
+    }, "6fb6a72764d60506145ce117d7db3bca", "6bc33fbf1fc5e5d7474592d53e1ee6fb");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(configuration.context)
         .name(configuration.name)
         .callback(_openCallback)

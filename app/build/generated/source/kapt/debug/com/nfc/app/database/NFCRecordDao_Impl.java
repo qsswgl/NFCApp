@@ -45,7 +45,7 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
     this.__insertionAdapterOfNFCRecord = new EntityInsertionAdapter<NFCRecord>(__db) {
       @Override
       public String createQuery() {
-        return "INSERT OR ABORT INTO `nfc_records` (`id`,`nfcId`,`cardNumber`,`carNumber`,`readTime`,`content`,`uploadStatus`) VALUES (nullif(?, 0),?,?,?,?,?,?)";
+        return "INSERT OR ABORT INTO `nfc_records` (`id`,`nfcId`,`cardNumber`,`carNumber`,`unitName`,`deviceName`,`amount`,`readTime`,`content`,`uploadStatus`,`uploadTime`,`uploadSuccess`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -66,14 +66,32 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
         } else {
           stmt.bindString(4, value.getCarNumber());
         }
-        stmt.bindLong(5, value.getReadTime());
-        if (value.getContent() == null) {
+        if (value.getUnitName() == null) {
+          stmt.bindNull(5);
+        } else {
+          stmt.bindString(5, value.getUnitName());
+        }
+        if (value.getDeviceName() == null) {
           stmt.bindNull(6);
         } else {
-          stmt.bindString(6, value.getContent());
+          stmt.bindString(6, value.getDeviceName());
+        }
+        if (value.getAmount() == null) {
+          stmt.bindNull(7);
+        } else {
+          stmt.bindString(7, value.getAmount());
+        }
+        stmt.bindLong(8, value.getReadTime());
+        if (value.getContent() == null) {
+          stmt.bindNull(9);
+        } else {
+          stmt.bindString(9, value.getContent());
         }
         final int _tmp = value.getUploadStatus() ? 1 : 0;
-        stmt.bindLong(7, _tmp);
+        stmt.bindLong(10, _tmp);
+        stmt.bindLong(11, value.getUploadTime());
+        final int _tmp_1 = value.getUploadSuccess() ? 1 : 0;
+        stmt.bindLong(12, _tmp_1);
       }
     };
     this.__deletionAdapterOfNFCRecord = new EntityDeletionOrUpdateAdapter<NFCRecord>(__db) {
@@ -90,7 +108,7 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
     this.__updateAdapterOfNFCRecord = new EntityDeletionOrUpdateAdapter<NFCRecord>(__db) {
       @Override
       public String createQuery() {
-        return "UPDATE OR ABORT `nfc_records` SET `id` = ?,`nfcId` = ?,`cardNumber` = ?,`carNumber` = ?,`readTime` = ?,`content` = ?,`uploadStatus` = ? WHERE `id` = ?";
+        return "UPDATE OR ABORT `nfc_records` SET `id` = ?,`nfcId` = ?,`cardNumber` = ?,`carNumber` = ?,`unitName` = ?,`deviceName` = ?,`amount` = ?,`readTime` = ?,`content` = ?,`uploadStatus` = ?,`uploadTime` = ?,`uploadSuccess` = ? WHERE `id` = ?";
       }
 
       @Override
@@ -111,15 +129,33 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
         } else {
           stmt.bindString(4, value.getCarNumber());
         }
-        stmt.bindLong(5, value.getReadTime());
-        if (value.getContent() == null) {
+        if (value.getUnitName() == null) {
+          stmt.bindNull(5);
+        } else {
+          stmt.bindString(5, value.getUnitName());
+        }
+        if (value.getDeviceName() == null) {
           stmt.bindNull(6);
         } else {
-          stmt.bindString(6, value.getContent());
+          stmt.bindString(6, value.getDeviceName());
+        }
+        if (value.getAmount() == null) {
+          stmt.bindNull(7);
+        } else {
+          stmt.bindString(7, value.getAmount());
+        }
+        stmt.bindLong(8, value.getReadTime());
+        if (value.getContent() == null) {
+          stmt.bindNull(9);
+        } else {
+          stmt.bindString(9, value.getContent());
         }
         final int _tmp = value.getUploadStatus() ? 1 : 0;
-        stmt.bindLong(7, _tmp);
-        stmt.bindLong(8, value.getId());
+        stmt.bindLong(10, _tmp);
+        stmt.bindLong(11, value.getUploadTime());
+        final int _tmp_1 = value.getUploadSuccess() ? 1 : 0;
+        stmt.bindLong(12, _tmp_1);
+        stmt.bindLong(13, value.getId());
       }
     };
     this.__preparedStmtOfDeleteUploadedRecords = new SharedSQLiteStatement(__db) {
@@ -215,9 +251,14 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
           final int _cursorIndexOfNfcId = CursorUtil.getColumnIndexOrThrow(_cursor, "nfcId");
           final int _cursorIndexOfCardNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "cardNumber");
           final int _cursorIndexOfCarNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "carNumber");
+          final int _cursorIndexOfUnitName = CursorUtil.getColumnIndexOrThrow(_cursor, "unitName");
+          final int _cursorIndexOfDeviceName = CursorUtil.getColumnIndexOrThrow(_cursor, "deviceName");
+          final int _cursorIndexOfAmount = CursorUtil.getColumnIndexOrThrow(_cursor, "amount");
           final int _cursorIndexOfReadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "readTime");
           final int _cursorIndexOfContent = CursorUtil.getColumnIndexOrThrow(_cursor, "content");
           final int _cursorIndexOfUploadStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadStatus");
+          final int _cursorIndexOfUploadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadTime");
+          final int _cursorIndexOfUploadSuccess = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadSuccess");
           final List<NFCRecord> _result = new ArrayList<NFCRecord>(_cursor.getCount());
           while(_cursor.moveToNext()) {
             final NFCRecord _item;
@@ -241,6 +282,24 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
             } else {
               _tmpCarNumber = _cursor.getString(_cursorIndexOfCarNumber);
             }
+            final String _tmpUnitName;
+            if (_cursor.isNull(_cursorIndexOfUnitName)) {
+              _tmpUnitName = null;
+            } else {
+              _tmpUnitName = _cursor.getString(_cursorIndexOfUnitName);
+            }
+            final String _tmpDeviceName;
+            if (_cursor.isNull(_cursorIndexOfDeviceName)) {
+              _tmpDeviceName = null;
+            } else {
+              _tmpDeviceName = _cursor.getString(_cursorIndexOfDeviceName);
+            }
+            final String _tmpAmount;
+            if (_cursor.isNull(_cursorIndexOfAmount)) {
+              _tmpAmount = null;
+            } else {
+              _tmpAmount = _cursor.getString(_cursorIndexOfAmount);
+            }
             final long _tmpReadTime;
             _tmpReadTime = _cursor.getLong(_cursorIndexOfReadTime);
             final String _tmpContent;
@@ -253,7 +312,13 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
             final int _tmp;
             _tmp = _cursor.getInt(_cursorIndexOfUploadStatus);
             _tmpUploadStatus = _tmp != 0;
-            _item = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpReadTime,_tmpContent,_tmpUploadStatus);
+            final long _tmpUploadTime;
+            _tmpUploadTime = _cursor.getLong(_cursorIndexOfUploadTime);
+            final boolean _tmpUploadSuccess;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfUploadSuccess);
+            _tmpUploadSuccess = _tmp_1 != 0;
+            _item = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpUnitName,_tmpDeviceName,_tmpAmount,_tmpReadTime,_tmpContent,_tmpUploadStatus,_tmpUploadTime,_tmpUploadSuccess);
             _result.add(_item);
           }
           return _result;
@@ -281,9 +346,14 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
           final int _cursorIndexOfNfcId = CursorUtil.getColumnIndexOrThrow(_cursor, "nfcId");
           final int _cursorIndexOfCardNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "cardNumber");
           final int _cursorIndexOfCarNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "carNumber");
+          final int _cursorIndexOfUnitName = CursorUtil.getColumnIndexOrThrow(_cursor, "unitName");
+          final int _cursorIndexOfDeviceName = CursorUtil.getColumnIndexOrThrow(_cursor, "deviceName");
+          final int _cursorIndexOfAmount = CursorUtil.getColumnIndexOrThrow(_cursor, "amount");
           final int _cursorIndexOfReadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "readTime");
           final int _cursorIndexOfContent = CursorUtil.getColumnIndexOrThrow(_cursor, "content");
           final int _cursorIndexOfUploadStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadStatus");
+          final int _cursorIndexOfUploadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadTime");
+          final int _cursorIndexOfUploadSuccess = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadSuccess");
           final NFCRecord _result;
           if(_cursor.moveToFirst()) {
             final int _tmpId;
@@ -306,6 +376,24 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
             } else {
               _tmpCarNumber = _cursor.getString(_cursorIndexOfCarNumber);
             }
+            final String _tmpUnitName;
+            if (_cursor.isNull(_cursorIndexOfUnitName)) {
+              _tmpUnitName = null;
+            } else {
+              _tmpUnitName = _cursor.getString(_cursorIndexOfUnitName);
+            }
+            final String _tmpDeviceName;
+            if (_cursor.isNull(_cursorIndexOfDeviceName)) {
+              _tmpDeviceName = null;
+            } else {
+              _tmpDeviceName = _cursor.getString(_cursorIndexOfDeviceName);
+            }
+            final String _tmpAmount;
+            if (_cursor.isNull(_cursorIndexOfAmount)) {
+              _tmpAmount = null;
+            } else {
+              _tmpAmount = _cursor.getString(_cursorIndexOfAmount);
+            }
             final long _tmpReadTime;
             _tmpReadTime = _cursor.getLong(_cursorIndexOfReadTime);
             final String _tmpContent;
@@ -318,7 +406,13 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
             final int _tmp;
             _tmp = _cursor.getInt(_cursorIndexOfUploadStatus);
             _tmpUploadStatus = _tmp != 0;
-            _result = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpReadTime,_tmpContent,_tmpUploadStatus);
+            final long _tmpUploadTime;
+            _tmpUploadTime = _cursor.getLong(_cursorIndexOfUploadTime);
+            final boolean _tmpUploadSuccess;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfUploadSuccess);
+            _tmpUploadSuccess = _tmp_1 != 0;
+            _result = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpUnitName,_tmpDeviceName,_tmpAmount,_tmpReadTime,_tmpContent,_tmpUploadStatus,_tmpUploadTime,_tmpUploadSuccess);
           } else {
             _result = null;
           }
@@ -352,9 +446,14 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
           final int _cursorIndexOfNfcId = CursorUtil.getColumnIndexOrThrow(_cursor, "nfcId");
           final int _cursorIndexOfCardNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "cardNumber");
           final int _cursorIndexOfCarNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "carNumber");
+          final int _cursorIndexOfUnitName = CursorUtil.getColumnIndexOrThrow(_cursor, "unitName");
+          final int _cursorIndexOfDeviceName = CursorUtil.getColumnIndexOrThrow(_cursor, "deviceName");
+          final int _cursorIndexOfAmount = CursorUtil.getColumnIndexOrThrow(_cursor, "amount");
           final int _cursorIndexOfReadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "readTime");
           final int _cursorIndexOfContent = CursorUtil.getColumnIndexOrThrow(_cursor, "content");
           final int _cursorIndexOfUploadStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadStatus");
+          final int _cursorIndexOfUploadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadTime");
+          final int _cursorIndexOfUploadSuccess = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadSuccess");
           final List<NFCRecord> _result = new ArrayList<NFCRecord>(_cursor.getCount());
           while(_cursor.moveToNext()) {
             final NFCRecord _item;
@@ -378,6 +477,24 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
             } else {
               _tmpCarNumber = _cursor.getString(_cursorIndexOfCarNumber);
             }
+            final String _tmpUnitName;
+            if (_cursor.isNull(_cursorIndexOfUnitName)) {
+              _tmpUnitName = null;
+            } else {
+              _tmpUnitName = _cursor.getString(_cursorIndexOfUnitName);
+            }
+            final String _tmpDeviceName;
+            if (_cursor.isNull(_cursorIndexOfDeviceName)) {
+              _tmpDeviceName = null;
+            } else {
+              _tmpDeviceName = _cursor.getString(_cursorIndexOfDeviceName);
+            }
+            final String _tmpAmount;
+            if (_cursor.isNull(_cursorIndexOfAmount)) {
+              _tmpAmount = null;
+            } else {
+              _tmpAmount = _cursor.getString(_cursorIndexOfAmount);
+            }
             final long _tmpReadTime;
             _tmpReadTime = _cursor.getLong(_cursorIndexOfReadTime);
             final String _tmpContent;
@@ -390,7 +507,306 @@ public final class NFCRecordDao_Impl implements NFCRecordDao {
             final int _tmp;
             _tmp = _cursor.getInt(_cursorIndexOfUploadStatus);
             _tmpUploadStatus = _tmp != 0;
-            _item = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpReadTime,_tmpContent,_tmpUploadStatus);
+            final long _tmpUploadTime;
+            _tmpUploadTime = _cursor.getLong(_cursorIndexOfUploadTime);
+            final boolean _tmpUploadSuccess;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfUploadSuccess);
+            _tmpUploadSuccess = _tmp_1 != 0;
+            _item = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpUnitName,_tmpDeviceName,_tmpAmount,_tmpReadTime,_tmpContent,_tmpUploadStatus,_tmpUploadTime,_tmpUploadSuccess);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, continuation);
+  }
+
+  @Override
+  public Object getLastRecordByCardNumber(final String cardNumber,
+      final Continuation<? super NFCRecord> continuation) {
+    final String _sql = "SELECT * FROM nfc_records WHERE cardNumber = ? ORDER BY readTime DESC LIMIT 1";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    if (cardNumber == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, cardNumber);
+    }
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<NFCRecord>() {
+      @Override
+      public NFCRecord call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfNfcId = CursorUtil.getColumnIndexOrThrow(_cursor, "nfcId");
+          final int _cursorIndexOfCardNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "cardNumber");
+          final int _cursorIndexOfCarNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "carNumber");
+          final int _cursorIndexOfUnitName = CursorUtil.getColumnIndexOrThrow(_cursor, "unitName");
+          final int _cursorIndexOfDeviceName = CursorUtil.getColumnIndexOrThrow(_cursor, "deviceName");
+          final int _cursorIndexOfAmount = CursorUtil.getColumnIndexOrThrow(_cursor, "amount");
+          final int _cursorIndexOfReadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "readTime");
+          final int _cursorIndexOfContent = CursorUtil.getColumnIndexOrThrow(_cursor, "content");
+          final int _cursorIndexOfUploadStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadStatus");
+          final int _cursorIndexOfUploadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadTime");
+          final int _cursorIndexOfUploadSuccess = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadSuccess");
+          final NFCRecord _result;
+          if(_cursor.moveToFirst()) {
+            final int _tmpId;
+            _tmpId = _cursor.getInt(_cursorIndexOfId);
+            final String _tmpNfcId;
+            if (_cursor.isNull(_cursorIndexOfNfcId)) {
+              _tmpNfcId = null;
+            } else {
+              _tmpNfcId = _cursor.getString(_cursorIndexOfNfcId);
+            }
+            final String _tmpCardNumber;
+            if (_cursor.isNull(_cursorIndexOfCardNumber)) {
+              _tmpCardNumber = null;
+            } else {
+              _tmpCardNumber = _cursor.getString(_cursorIndexOfCardNumber);
+            }
+            final String _tmpCarNumber;
+            if (_cursor.isNull(_cursorIndexOfCarNumber)) {
+              _tmpCarNumber = null;
+            } else {
+              _tmpCarNumber = _cursor.getString(_cursorIndexOfCarNumber);
+            }
+            final String _tmpUnitName;
+            if (_cursor.isNull(_cursorIndexOfUnitName)) {
+              _tmpUnitName = null;
+            } else {
+              _tmpUnitName = _cursor.getString(_cursorIndexOfUnitName);
+            }
+            final String _tmpDeviceName;
+            if (_cursor.isNull(_cursorIndexOfDeviceName)) {
+              _tmpDeviceName = null;
+            } else {
+              _tmpDeviceName = _cursor.getString(_cursorIndexOfDeviceName);
+            }
+            final String _tmpAmount;
+            if (_cursor.isNull(_cursorIndexOfAmount)) {
+              _tmpAmount = null;
+            } else {
+              _tmpAmount = _cursor.getString(_cursorIndexOfAmount);
+            }
+            final long _tmpReadTime;
+            _tmpReadTime = _cursor.getLong(_cursorIndexOfReadTime);
+            final String _tmpContent;
+            if (_cursor.isNull(_cursorIndexOfContent)) {
+              _tmpContent = null;
+            } else {
+              _tmpContent = _cursor.getString(_cursorIndexOfContent);
+            }
+            final boolean _tmpUploadStatus;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfUploadStatus);
+            _tmpUploadStatus = _tmp != 0;
+            final long _tmpUploadTime;
+            _tmpUploadTime = _cursor.getLong(_cursorIndexOfUploadTime);
+            final boolean _tmpUploadSuccess;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfUploadSuccess);
+            _tmpUploadSuccess = _tmp_1 != 0;
+            _result = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpUnitName,_tmpDeviceName,_tmpAmount,_tmpReadTime,_tmpContent,_tmpUploadStatus,_tmpUploadTime,_tmpUploadSuccess);
+          } else {
+            _result = null;
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, continuation);
+  }
+
+  @Override
+  public Object getRecordsByCardNumber(final String cardNumber,
+      final Continuation<? super List<NFCRecord>> continuation) {
+    final String _sql = "SELECT * FROM nfc_records WHERE cardNumber = ? ORDER BY readTime DESC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    if (cardNumber == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, cardNumber);
+    }
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<List<NFCRecord>>() {
+      @Override
+      public List<NFCRecord> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfNfcId = CursorUtil.getColumnIndexOrThrow(_cursor, "nfcId");
+          final int _cursorIndexOfCardNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "cardNumber");
+          final int _cursorIndexOfCarNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "carNumber");
+          final int _cursorIndexOfUnitName = CursorUtil.getColumnIndexOrThrow(_cursor, "unitName");
+          final int _cursorIndexOfDeviceName = CursorUtil.getColumnIndexOrThrow(_cursor, "deviceName");
+          final int _cursorIndexOfAmount = CursorUtil.getColumnIndexOrThrow(_cursor, "amount");
+          final int _cursorIndexOfReadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "readTime");
+          final int _cursorIndexOfContent = CursorUtil.getColumnIndexOrThrow(_cursor, "content");
+          final int _cursorIndexOfUploadStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadStatus");
+          final int _cursorIndexOfUploadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadTime");
+          final int _cursorIndexOfUploadSuccess = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadSuccess");
+          final List<NFCRecord> _result = new ArrayList<NFCRecord>(_cursor.getCount());
+          while(_cursor.moveToNext()) {
+            final NFCRecord _item;
+            final int _tmpId;
+            _tmpId = _cursor.getInt(_cursorIndexOfId);
+            final String _tmpNfcId;
+            if (_cursor.isNull(_cursorIndexOfNfcId)) {
+              _tmpNfcId = null;
+            } else {
+              _tmpNfcId = _cursor.getString(_cursorIndexOfNfcId);
+            }
+            final String _tmpCardNumber;
+            if (_cursor.isNull(_cursorIndexOfCardNumber)) {
+              _tmpCardNumber = null;
+            } else {
+              _tmpCardNumber = _cursor.getString(_cursorIndexOfCardNumber);
+            }
+            final String _tmpCarNumber;
+            if (_cursor.isNull(_cursorIndexOfCarNumber)) {
+              _tmpCarNumber = null;
+            } else {
+              _tmpCarNumber = _cursor.getString(_cursorIndexOfCarNumber);
+            }
+            final String _tmpUnitName;
+            if (_cursor.isNull(_cursorIndexOfUnitName)) {
+              _tmpUnitName = null;
+            } else {
+              _tmpUnitName = _cursor.getString(_cursorIndexOfUnitName);
+            }
+            final String _tmpDeviceName;
+            if (_cursor.isNull(_cursorIndexOfDeviceName)) {
+              _tmpDeviceName = null;
+            } else {
+              _tmpDeviceName = _cursor.getString(_cursorIndexOfDeviceName);
+            }
+            final String _tmpAmount;
+            if (_cursor.isNull(_cursorIndexOfAmount)) {
+              _tmpAmount = null;
+            } else {
+              _tmpAmount = _cursor.getString(_cursorIndexOfAmount);
+            }
+            final long _tmpReadTime;
+            _tmpReadTime = _cursor.getLong(_cursorIndexOfReadTime);
+            final String _tmpContent;
+            if (_cursor.isNull(_cursorIndexOfContent)) {
+              _tmpContent = null;
+            } else {
+              _tmpContent = _cursor.getString(_cursorIndexOfContent);
+            }
+            final boolean _tmpUploadStatus;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfUploadStatus);
+            _tmpUploadStatus = _tmp != 0;
+            final long _tmpUploadTime;
+            _tmpUploadTime = _cursor.getLong(_cursorIndexOfUploadTime);
+            final boolean _tmpUploadSuccess;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfUploadSuccess);
+            _tmpUploadSuccess = _tmp_1 != 0;
+            _item = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpUnitName,_tmpDeviceName,_tmpAmount,_tmpReadTime,_tmpContent,_tmpUploadStatus,_tmpUploadTime,_tmpUploadSuccess);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, continuation);
+  }
+
+  @Override
+  public Object getUnuploadedRecords(final Continuation<? super List<NFCRecord>> continuation) {
+    final String _sql = "SELECT * FROM nfc_records WHERE uploadStatus = 0 ORDER BY readTime ASC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<List<NFCRecord>>() {
+      @Override
+      public List<NFCRecord> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfNfcId = CursorUtil.getColumnIndexOrThrow(_cursor, "nfcId");
+          final int _cursorIndexOfCardNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "cardNumber");
+          final int _cursorIndexOfCarNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "carNumber");
+          final int _cursorIndexOfUnitName = CursorUtil.getColumnIndexOrThrow(_cursor, "unitName");
+          final int _cursorIndexOfDeviceName = CursorUtil.getColumnIndexOrThrow(_cursor, "deviceName");
+          final int _cursorIndexOfAmount = CursorUtil.getColumnIndexOrThrow(_cursor, "amount");
+          final int _cursorIndexOfReadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "readTime");
+          final int _cursorIndexOfContent = CursorUtil.getColumnIndexOrThrow(_cursor, "content");
+          final int _cursorIndexOfUploadStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadStatus");
+          final int _cursorIndexOfUploadTime = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadTime");
+          final int _cursorIndexOfUploadSuccess = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadSuccess");
+          final List<NFCRecord> _result = new ArrayList<NFCRecord>(_cursor.getCount());
+          while(_cursor.moveToNext()) {
+            final NFCRecord _item;
+            final int _tmpId;
+            _tmpId = _cursor.getInt(_cursorIndexOfId);
+            final String _tmpNfcId;
+            if (_cursor.isNull(_cursorIndexOfNfcId)) {
+              _tmpNfcId = null;
+            } else {
+              _tmpNfcId = _cursor.getString(_cursorIndexOfNfcId);
+            }
+            final String _tmpCardNumber;
+            if (_cursor.isNull(_cursorIndexOfCardNumber)) {
+              _tmpCardNumber = null;
+            } else {
+              _tmpCardNumber = _cursor.getString(_cursorIndexOfCardNumber);
+            }
+            final String _tmpCarNumber;
+            if (_cursor.isNull(_cursorIndexOfCarNumber)) {
+              _tmpCarNumber = null;
+            } else {
+              _tmpCarNumber = _cursor.getString(_cursorIndexOfCarNumber);
+            }
+            final String _tmpUnitName;
+            if (_cursor.isNull(_cursorIndexOfUnitName)) {
+              _tmpUnitName = null;
+            } else {
+              _tmpUnitName = _cursor.getString(_cursorIndexOfUnitName);
+            }
+            final String _tmpDeviceName;
+            if (_cursor.isNull(_cursorIndexOfDeviceName)) {
+              _tmpDeviceName = null;
+            } else {
+              _tmpDeviceName = _cursor.getString(_cursorIndexOfDeviceName);
+            }
+            final String _tmpAmount;
+            if (_cursor.isNull(_cursorIndexOfAmount)) {
+              _tmpAmount = null;
+            } else {
+              _tmpAmount = _cursor.getString(_cursorIndexOfAmount);
+            }
+            final long _tmpReadTime;
+            _tmpReadTime = _cursor.getLong(_cursorIndexOfReadTime);
+            final String _tmpContent;
+            if (_cursor.isNull(_cursorIndexOfContent)) {
+              _tmpContent = null;
+            } else {
+              _tmpContent = _cursor.getString(_cursorIndexOfContent);
+            }
+            final boolean _tmpUploadStatus;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfUploadStatus);
+            _tmpUploadStatus = _tmp != 0;
+            final long _tmpUploadTime;
+            _tmpUploadTime = _cursor.getLong(_cursorIndexOfUploadTime);
+            final boolean _tmpUploadSuccess;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfUploadSuccess);
+            _tmpUploadSuccess = _tmp_1 != 0;
+            _item = new NFCRecord(_tmpId,_tmpNfcId,_tmpCardNumber,_tmpCarNumber,_tmpUnitName,_tmpDeviceName,_tmpAmount,_tmpReadTime,_tmpContent,_tmpUploadStatus,_tmpUploadTime,_tmpUploadSuccess);
             _result.add(_item);
           }
           return _result;

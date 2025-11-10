@@ -22,10 +22,25 @@ public final class ActivityMainBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final LinearLayout btnBleScan;
+
+  @NonNull
+  public final LinearLayout btnBleTest;
+
+  @NonNull
+  public final LinearLayout btnConfirm;
+
+  @NonNull
   public final LinearLayout btnPrint;
 
   @NonNull
   public final LinearLayout btnRead;
+
+  @NonNull
+  public final LinearLayout btnSelectPrinter;
+
+  @NonNull
+  public final LinearLayout btnTestPrint;
 
   @NonNull
   public final LinearLayout btnUpload;
@@ -34,29 +49,54 @@ public final class ActivityMainBinding implements ViewBinding {
   public final LinearLayout btnWrite;
 
   @NonNull
-  public final EditText etCarNumber;
+  public final EditText etAmount;
 
   @NonNull
-  public final EditText etCardNumber;
+  public final TextView etCarNumber;
+
+  @NonNull
+  public final TextView etCardNumber;
+
+  @NonNull
+  public final EditText etDeviceName;
+
+  @NonNull
+  public final EditText etUnitName;
 
   @NonNull
   public final RecyclerView recyclerViewRecords;
 
   @NonNull
+  public final TextView tvFuelDate;
+
+  @NonNull
   public final TextView tvNfcid;
 
-  private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull LinearLayout btnPrint,
-      @NonNull LinearLayout btnRead, @NonNull LinearLayout btnUpload,
-      @NonNull LinearLayout btnWrite, @NonNull EditText etCarNumber, @NonNull EditText etCardNumber,
-      @NonNull RecyclerView recyclerViewRecords, @NonNull TextView tvNfcid) {
+  private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull LinearLayout btnBleScan,
+      @NonNull LinearLayout btnBleTest, @NonNull LinearLayout btnConfirm,
+      @NonNull LinearLayout btnPrint, @NonNull LinearLayout btnRead,
+      @NonNull LinearLayout btnSelectPrinter, @NonNull LinearLayout btnTestPrint,
+      @NonNull LinearLayout btnUpload, @NonNull LinearLayout btnWrite, @NonNull EditText etAmount,
+      @NonNull TextView etCarNumber, @NonNull TextView etCardNumber, @NonNull EditText etDeviceName,
+      @NonNull EditText etUnitName, @NonNull RecyclerView recyclerViewRecords,
+      @NonNull TextView tvFuelDate, @NonNull TextView tvNfcid) {
     this.rootView = rootView;
+    this.btnBleScan = btnBleScan;
+    this.btnBleTest = btnBleTest;
+    this.btnConfirm = btnConfirm;
     this.btnPrint = btnPrint;
     this.btnRead = btnRead;
+    this.btnSelectPrinter = btnSelectPrinter;
+    this.btnTestPrint = btnTestPrint;
     this.btnUpload = btnUpload;
     this.btnWrite = btnWrite;
+    this.etAmount = etAmount;
     this.etCarNumber = etCarNumber;
     this.etCardNumber = etCardNumber;
+    this.etDeviceName = etDeviceName;
+    this.etUnitName = etUnitName;
     this.recyclerViewRecords = recyclerViewRecords;
+    this.tvFuelDate = tvFuelDate;
     this.tvNfcid = tvNfcid;
   }
 
@@ -87,6 +127,24 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btn_ble_scan;
+      LinearLayout btnBleScan = ViewBindings.findChildViewById(rootView, id);
+      if (btnBleScan == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_ble_test;
+      LinearLayout btnBleTest = ViewBindings.findChildViewById(rootView, id);
+      if (btnBleTest == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_confirm;
+      LinearLayout btnConfirm = ViewBindings.findChildViewById(rootView, id);
+      if (btnConfirm == null) {
+        break missingId;
+      }
+
       id = R.id.btn_print;
       LinearLayout btnPrint = ViewBindings.findChildViewById(rootView, id);
       if (btnPrint == null) {
@@ -96,6 +154,18 @@ public final class ActivityMainBinding implements ViewBinding {
       id = R.id.btn_read;
       LinearLayout btnRead = ViewBindings.findChildViewById(rootView, id);
       if (btnRead == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_select_printer;
+      LinearLayout btnSelectPrinter = ViewBindings.findChildViewById(rootView, id);
+      if (btnSelectPrinter == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_test_print;
+      LinearLayout btnTestPrint = ViewBindings.findChildViewById(rootView, id);
+      if (btnTestPrint == null) {
         break missingId;
       }
 
@@ -111,15 +181,33 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.et_amount;
+      EditText etAmount = ViewBindings.findChildViewById(rootView, id);
+      if (etAmount == null) {
+        break missingId;
+      }
+
       id = R.id.et_car_number;
-      EditText etCarNumber = ViewBindings.findChildViewById(rootView, id);
+      TextView etCarNumber = ViewBindings.findChildViewById(rootView, id);
       if (etCarNumber == null) {
         break missingId;
       }
 
       id = R.id.et_card_number;
-      EditText etCardNumber = ViewBindings.findChildViewById(rootView, id);
+      TextView etCardNumber = ViewBindings.findChildViewById(rootView, id);
       if (etCardNumber == null) {
+        break missingId;
+      }
+
+      id = R.id.et_device_name;
+      EditText etDeviceName = ViewBindings.findChildViewById(rootView, id);
+      if (etDeviceName == null) {
+        break missingId;
+      }
+
+      id = R.id.et_unit_name;
+      EditText etUnitName = ViewBindings.findChildViewById(rootView, id);
+      if (etUnitName == null) {
         break missingId;
       }
 
@@ -129,14 +217,22 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_fuel_date;
+      TextView tvFuelDate = ViewBindings.findChildViewById(rootView, id);
+      if (tvFuelDate == null) {
+        break missingId;
+      }
+
       id = R.id.tv_nfcid;
       TextView tvNfcid = ViewBindings.findChildViewById(rootView, id);
       if (tvNfcid == null) {
         break missingId;
       }
 
-      return new ActivityMainBinding((LinearLayout) rootView, btnPrint, btnRead, btnUpload,
-          btnWrite, etCarNumber, etCardNumber, recyclerViewRecords, tvNfcid);
+      return new ActivityMainBinding((LinearLayout) rootView, btnBleScan, btnBleTest, btnConfirm,
+          btnPrint, btnRead, btnSelectPrinter, btnTestPrint, btnUpload, btnWrite, etAmount,
+          etCarNumber, etCardNumber, etDeviceName, etUnitName, recyclerViewRecords, tvFuelDate,
+          tvNfcid);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
