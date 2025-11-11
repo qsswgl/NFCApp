@@ -798,9 +798,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                     }
                     
-                    // 使用 PUQU SDK 自动打印
+                    // 使用 PUQU SDK 自动打印 (打印2份)
                     lifecycleScope.launch {
-                        val printSuccess = puquPrinter.autoPrintReceipt(
+                        Log.d(TAG, "开始打印第1份小票...")
+                        val printSuccess1 = puquPrinter.autoPrintReceipt(
                             cardNumber = cardNumber,
                             carNumber = carNumber,
                             unitName = unitName,
@@ -809,10 +810,32 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             readTime = System.currentTimeMillis()
                         )
                         
-                        if (printSuccess) {
-                            Log.d(TAG, "✓ 确认后自动打印成功")
+                        if (printSuccess1) {
+                            Log.d(TAG, "✓ 第1份小票打印成功")
+                            
+                            // 延迟2秒后打印第2份
+                            kotlinx.coroutines.delay(2000)
+                            
+                            Log.d(TAG, "开始打印第2份小票...")
+                            val printSuccess2 = puquPrinter.autoPrintReceipt(
+                                cardNumber = cardNumber,
+                                carNumber = carNumber,
+                                unitName = unitName,
+                                deviceName = deviceName,
+                                amount = amount,
+                                readTime = System.currentTimeMillis()
+                            )
+                            
+                            if (printSuccess2) {
+                                Log.d(TAG, "✓ 第2份小票打印成功")
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(this@MainActivity, "✓ 2份小票打印完成", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                Log.w(TAG, "⚠️ 第2份小票打印失败")
+                            }
                         } else {
-                            Log.w(TAG, "⚠️ 确认后自动打印失败")
+                            Log.w(TAG, "⚠️ 第1份小票打印失败")
                         }
                     }
                 }
