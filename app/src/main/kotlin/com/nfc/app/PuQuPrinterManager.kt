@@ -216,18 +216,25 @@ class PuQuPrinterManager(private val context: Context) {
             val printers = getAllPrinters()
             
             if (printers.isEmpty()) {
-                callback?.onPrintFailed("未找到已配对的打印机，请先在系统设置中配对")
+                Log.e(TAG, "❌ 未找到已配对的打印机")
+                callback?.onPrintFailed("未找到已配对的打印机，请先在系统设置中配对 AQ-V258000114")
                 continuation.resume(false)
                 return@suspendCancellableCoroutine
             }
             
-            Log.d(TAG, "找到 ${printers.size} 个已配对的打印机")
+            Log.d(TAG, "✓ 找到 ${printers.size} 个已配对的打印机:")
+            printers.forEachIndexed { index, device ->
+                Log.d(TAG, "  [$index] ${device.name} - ${device.address}")
+            }
             
             // 连接第一个打印机
             val printer = printers[0]
             val address = printer.address
             
-            Log.d(TAG, "开始连接打印机: ${printer.name} ($address)")
+            Log.d(TAG, "========== 开始连接打印机 ==========")
+            Log.d(TAG, "打印机名称: ${printer.name}")
+            Log.d(TAG, "打印机地址: $address")
+            Log.d(TAG, "======================================")
             callback?.onConnecting(printer.name)
             
             // 使用 PUQU SDK 连接打印机
@@ -314,17 +321,25 @@ class PuQuPrinterManager(private val context: Context) {
                 callback?.onConnecting(targetPrinter.name)
                 connectToPrinter(targetPrinter.address)
                 
-                // 等待连接成功 (最多10秒)
+                // 等待连接成功 (最多20秒)
                 Log.d(TAG, "步骤2: 等待连接成功...")
                 var waitTime = 0
-                while (!isConnected && waitTime < 10000) {
-                    kotlinx.coroutines.delay(500)
-                    waitTime += 500
+                while (!isConnected && waitTime < 20000) {
+                    kotlinx.coroutines.delay(1000)
+                    waitTime += 1000
+                    if (waitTime % 5000 == 0) {
+                        Log.d(TAG, "等待连接中... ${waitTime/1000}秒")
+                    }
                 }
                 
                 if (!isConnected) {
-                    Log.e(TAG, "❌ 连接超时")
-                    callback?.onPrintFailed("连接超时,请检查打印机")
+                    Log.e(TAG, "❌ 连接超时 (20秒)")
+                    Log.e(TAG, "可能原因:")
+                    Log.e(TAG, "  1. 打印机未开机")
+                    Log.e(TAG, "  2. 打印机蓝牙未开启")
+                    Log.e(TAG, "  3. 打印机未配对")
+                    Log.e(TAG, "  4. 打印机距离太远")
+                    callback?.onPrintFailed("连接超时!\n请检查:\n• 打印机是否开机\n• 蓝牙是否开启\n• 是否已在系统设置中配对")
                     return false
                 }
             }
