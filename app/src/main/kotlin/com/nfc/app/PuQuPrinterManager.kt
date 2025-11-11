@@ -402,6 +402,9 @@ class PuQuPrinterManager(private val context: Context) {
             Log.d(TAG, "步骤1: startJob(400, -1)")
             currentManager.startJob(400, -1)
             
+            // 保留顶部1cm空白 (约40像素)
+            currentManager.addBlank(40)
+            
             // 步骤2: 标题 - 居中,粗体,大字体
             Log.d(TAG, "步骤2: 打印标题")
             currentManager.setLeft(0)
@@ -411,11 +414,11 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.addText("===== 缴费小票 =====")
             currentManager.addBlank(16)
             
-            // 步骤3: 内容 - 左对齐,正常字体
+            // 步骤3: 内容 - 左对齐,字号增大50% (24f → 36f)
             Log.d(TAG, "步骤3: 打印内容")
             currentManager.setLeft(16)
             currentManager.setBold(false)
-            currentManager.setFontSize(24f)
+            currentManager.setFontSize(36f)  // 字号增大50%: 24f → 36f
             currentManager.setAlignment(0)  // 0=左对齐
             
             currentManager.addText("卡号: $cardNumber")
@@ -436,12 +439,18 @@ class PuQuPrinterManager(private val context: Context) {
             
             currentManager.addBlank(8)
             currentManager.addText("时间: $dateStr")
-            currentManager.addBlank(16)
+            currentManager.addBlank(24)
             
             // 步骤4: 底部 - 居中
             currentManager.setAlignment(1)
             currentManager.addText("- - - - - - - - - - - - - - - -")
             currentManager.addText("谢谢惠顾!")
+            currentManager.addBlank(24)
+            
+            // 客户签字
+            currentManager.setAlignment(0)  // 左对齐
+            currentManager.setFontSize(32f)
+            currentManager.addText("客户签字：___________________")
             currentManager.addBlank(80)
             
             // 步骤5: 在后台线程执行打印
