@@ -152,6 +152,37 @@ class PuQuPrinterManager(private val context: Context) {
     }
     
     /**
+     * 获取已配对的 AQ-V 打印机
+     * 用于用户选择打印机
+     */
+    fun getPairedPrinters(): List<BluetoothDevice> {
+        val btAdapter = BluetoothAdapter.getDefaultAdapter() ?: return emptyList()
+        
+        return try {
+            val pairedDevices = btAdapter.bondedDevices?.filter { device ->
+                !device.name.isNullOrEmpty() && 
+                device.name.startsWith("AQ-V", ignoreCase = true)
+            }?.toList() ?: emptyList()
+            
+            Log.d(TAG, "========== 已配对的 AQ-V 打印机 ==========")
+            if (pairedDevices.isEmpty()) {
+                Log.w(TAG, "未找到已配对的 AQ-V 打印机")
+            } else {
+                Log.d(TAG, "找到 ${pairedDevices.size} 个已配对的打印机:")
+                pairedDevices.forEachIndexed { index, device ->
+                    Log.d(TAG, "  [${index + 1}] ${device.name} - ${device.address}")
+                }
+            }
+            Log.d(TAG, "========================================")
+            
+            pairedDevices
+        } catch (e: SecurityException) {
+            Log.e(TAG, "获取已配对设备权限异常", e)
+            emptyList()
+        }
+    }
+    
+    /**
      * 扫描并查找 AQ-V 打印机
      * @return 已配对的 AQ-V 打印机列表
      */
@@ -451,6 +482,95 @@ class PuQuPrinterManager(private val context: Context) {
             
             // 2. 执行打印
             Log.d(TAG, "步骤3: 开始打印...")
+            callback?.onPrintStart()
+            
+            val result = printReceiptContent(
+                cardNumber,
+                carNumber,
+                unitName,
+                deviceName,
+                amount,
+                readTime
+            )
+            
+            if (result) {
+                Log.d(TAG, "✓✓✓ 打印成功")
+                callback?.onPrintSuccess()
+            } else {
+                Log.e(TAG, "❌ 打印失败")
+                callback?.onPrintFailed("打印失败")
+            }
+            
+            result
+            
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ 打印异常", e)
+            callback?.onPrintFailed("打印异常: ${e.message}")
+            false
+        }
+    }
+    
+    /**
+     * 打印到指定地址的打印机
+     * 用于用户选择打印机后打印
+     */
+    suspend fun printToAddress(
+        printerAddress: String,
+        cardNumber: String,
+        carNumber: String,
+        unitName: String,
+        deviceName: String,
+        amount: String,
+        readTime: Long
+    ): Boolean {
+        return try {
+            Log.d(TAG, "========== 打印到指定打印机 ==========")
+            Log.d(TAG, "打印机地址: $printerAddress")
+            Log.d(TAG, "卡号: $cardNumber, 车号: $carNumber, 金额: $amount")
+            
+            // 检查蓝牙状态
+            val error = checkBluetoothStatus()
+            if (error != null) {
+                callback?.onPrintFailed(error)
+                return false
+            }
+            
+            // 如果是不同的打印机,先断开旧连接
+            if (isConnected && connectedAddress != printerAddress) {
+                Log.d(TAG, "检测到更换打印机,断开旧连接: $connectedAddress")
+                printManager?.closePrinter()
+                isConnected = false
+                connectedAddress = null
+                kotlinx.coroutines.delay(1000)
+            }
+            
+            // 连接打印机
+            if (!isConnected || connectedAddress != printerAddress) {
+                Log.d(TAG, "连接打印机: $printerAddress")
+                connectToPrinter(printerAddress)
+                
+                // 等待连接成功 (最多20秒)
+                Log.d(TAG, "等待连接...")
+                var waitTime = 0
+                while (!isConnected && waitTime < 20000) {
+                    kotlinx.coroutines.delay(1000)
+                    waitTime += 1000
+                    if (waitTime % 5000 == 0) {
+                        Log.d(TAG, "等待连接中... ${waitTime/1000}秒")
+                    }
+                }
+                
+                if (!isConnected) {
+                    Log.e(TAG, "❌ 连接超时 (20秒)")
+                    callback?.onPrintFailed("连接超时!\n请检查:\n• 打印机是否开机\n• 蓝牙是否开启")
+                    return false
+                }
+            }
+            
+            Log.d(TAG, "✓ 打印机已连接")
+            
+            // 执行打印
+            Log.d(TAG, "开始打印...")
             callback?.onPrintStart()
             
             val result = printReceiptContent(

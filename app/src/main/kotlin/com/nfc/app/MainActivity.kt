@@ -799,45 +799,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                     
                     // 使用 PUQU SDK 自动打印 (打印2份)
-                    lifecycleScope.launch {
-                        Log.d(TAG, "开始打印第1份小票...")
-                        val printSuccess1 = puquPrinter.autoPrintReceipt(
-                            cardNumber = cardNumber,
-                            carNumber = carNumber,
-                            unitName = unitName,
-                            deviceName = deviceName,
-                            amount = amount,
-                            readTime = System.currentTimeMillis()
-                        )
-                        
-                        if (printSuccess1) {
-                            Log.d(TAG, "✓ 第1份小票打印成功")
-                            
-                            // 延迟2秒后打印第2份
-                            kotlinx.coroutines.delay(2000)
-                            
-                            Log.d(TAG, "开始打印第2份小票...")
-                            val printSuccess2 = puquPrinter.autoPrintReceipt(
-                                cardNumber = cardNumber,
-                                carNumber = carNumber,
-                                unitName = unitName,
-                                deviceName = deviceName,
-                                amount = amount,
-                                readTime = System.currentTimeMillis()
-                            )
-                            
-                            if (printSuccess2) {
-                                Log.d(TAG, "✓ 第2份小票打印成功")
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(this@MainActivity, "✓ 2份小票打印完成", Toast.LENGTH_SHORT).show()
-                                }
-                            } else {
-                                Log.w(TAG, "⚠️ 第2份小票打印失败")
-                            }
-                        } else {
-                            Log.w(TAG, "⚠️ 第1份小票打印失败")
-                        }
-                    }
+                    // 先检查并选择打印机
+                    selectPrinterAndPrint(
+                        cardNumber = cardNumber,
+                        carNumber = carNumber,
+                        unitName = unitName,
+                        deviceName = deviceName,
+                        amount = amount
+                    )
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "❌ 保存失败: ${e.message}", e)
@@ -845,6 +814,135 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     Toast.makeText(this@MainActivity, "✗ 保存失败: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+    }
+    
+    /**
+     * 选择打印机并打印
+     */
+    private fun selectPrinterAndPrint(
+        cardNumber: String,
+        carNumber: String,
+        unitName: String,
+        deviceName: String,
+        amount: String
+    ) {
+        lifecycleScope.launch {
+            try {
+                // 获取已配对的 AQ-V 打印机
+                Log.d(TAG, "查找已配对的打印机...")
+                val printers = puquPrinter.getPairedPrinters()
+                
+                when {
+                    printers.isEmpty() -> {
+                        // 没有已配对的打印机
+                        withContext(Dispatchers.Main) {
+                            android.app.AlertDialog.Builder(this@MainActivity)
+                                .setTitle("未找到打印机")
+                                .setMessage("未找到已配对的 AQ-V 打印机\n\n请在系统设置中配对打印机:\n" +
+                                        "设置 → 蓝牙 → 可用设备\n" +
+                                        "找到 AQ-V 开头的打印机并配对")
+                                .setPositiveButton("打开蓝牙设置") { _, _ ->
+                                    val intent = android.content.Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)
+                                    startActivity(intent)
+                                }
+                                .setNegativeButton("取消", null)
+                                .show()
+                        }
+                    }
+                    
+                    printers.size == 1 -> {
+                        // 只有一个打印机,直接打印
+                        val printer = printers[0]
+                        Log.d(TAG, "发现1个打印机,自动选择: ${printer.name}")
+                        printReceipts(printer.address, cardNumber, carNumber, unitName, deviceName, amount)
+                    }
+                    
+                    else -> {
+                        // 多个打印机,让用户选择
+                        withContext(Dispatchers.Main) {
+                            val printerNames = printers.map { "${it.name}\n${it.address}" }.toTypedArray()
+                            
+                            android.app.AlertDialog.Builder(this@MainActivity)
+                                .setTitle("选择打印机 (${printers.size}个)")
+                                .setItems(printerNames) { _, which ->
+                                    val selectedPrinter = printers[which]
+                                    Log.d(TAG, "用户选择打印机: ${selectedPrinter.name}")
+                                    
+                                    lifecycleScope.launch {
+                                        printReceipts(
+                                            selectedPrinter.address,
+                                            cardNumber,
+                                            carNumber,
+                                            unitName,
+                                            deviceName,
+                                            amount
+                                        )
+                                    }
+                                }
+                                .setNegativeButton("取消", null)
+                                .show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "查找打印机失败", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "查找打印机失败: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+    
+    /**
+     * 打印小票 (2份)
+     */
+    private suspend fun printReceipts(
+        printerAddress: String,
+        cardNumber: String,
+        carNumber: String,
+        unitName: String,
+        deviceName: String,
+        amount: String
+    ) {
+        Log.d(TAG, "开始打印第1份小票...")
+        val printSuccess1 = puquPrinter.printToAddress(
+            printerAddress = printerAddress,
+            cardNumber = cardNumber,
+            carNumber = carNumber,
+            unitName = unitName,
+            deviceName = deviceName,
+            amount = amount,
+            readTime = System.currentTimeMillis()
+        )
+        
+        if (printSuccess1) {
+            Log.d(TAG, "✓ 第1份小票打印成功")
+            
+            // 延迟2秒后打印第2份
+            kotlinx.coroutines.delay(2000)
+            
+            Log.d(TAG, "开始打印第2份小票...")
+            val printSuccess2 = puquPrinter.printToAddress(
+                printerAddress = printerAddress,
+                cardNumber = cardNumber,
+                carNumber = carNumber,
+                unitName = unitName,
+                deviceName = deviceName,
+                amount = amount,
+                readTime = System.currentTimeMillis()
+            )
+            
+            if (printSuccess2) {
+                Log.d(TAG, "✓ 第2份小票打印成功")
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "✓ 2份小票打印完成", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.w(TAG, "⚠️ 第2份小票打印失败")
+            }
+        } else {
+            Log.w(TAG, "⚠️ 第1份小票打印失败")
         }
     }
     

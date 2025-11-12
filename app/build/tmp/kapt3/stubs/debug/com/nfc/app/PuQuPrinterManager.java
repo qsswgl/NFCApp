@@ -12,7 +12,7 @@ import java.lang.System;
  * 3. SDK 连接: 使用 Classic 地址 (CD:AC:B0:07:00:72) 连接
  * 4. 打印: startJob -> addText -> printJob (后台线程)
  */
-@kotlin.Metadata(mv = {1, 8, 0}, k = 1, d1 = {"\u0000N\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0000\n\u0002\u0010\u000b\n\u0000\n\u0002\u0018\u0002\n\u0002\b\t\n\u0002\u0010\t\n\u0002\b\u0003\n\u0002\u0010\u0002\n\u0002\b\u0006\n\u0002\u0010 \n\u0002\u0018\u0002\n\u0002\b\f\u0018\u0000 .2\u00020\u0001:\u0002./B\r\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0002\u0010\u0004J\u0011\u0010\u000f\u001a\u00020\fH\u0086@\u00f8\u0001\u0000\u00a2\u0006\u0002\u0010\u0010JA\u0010\u0011\u001a\u00020\f2\u0006\u0010\u0012\u001a\u00020\n2\u0006\u0010\u0013\u001a\u00020\n2\u0006\u0010\u0014\u001a\u00020\n2\u0006\u0010\u0015\u001a\u00020\n2\u0006\u0010\u0016\u001a\u00020\n2\u0006\u0010\u0017\u001a\u00020\u0018H\u0086@\u00f8\u0001\u0000\u00a2\u0006\u0002\u0010\u0019J\b\u0010\u001a\u001a\u0004\u0018\u00010\nJ\u000e\u0010\u001b\u001a\u00020\u001c2\u0006\u0010\u001d\u001a\u00020\nJ\u0006\u0010\u001e\u001a\u00020\u001cJ\u0018\u0010\u001f\u001a\u0004\u0018\u00010\n2\u0006\u0010 \u001a\u00020\n2\u0006\u0010!\u001a\u00020\nJ\f\u0010\"\u001a\b\u0012\u0004\u0012\u00020$0#J\u0006\u0010%\u001a\u00020\u001cJ\u0010\u0010&\u001a\u00020\f2\u0006\u0010\u001d\u001a\u00020\nH\u0002J\u0006\u0010\'\u001a\u00020\fJ8\u0010(\u001a\u00020\f2\u0006\u0010\u0012\u001a\u00020\n2\u0006\u0010\u0013\u001a\u00020\n2\u0006\u0010\u0014\u001a\u00020\n2\u0006\u0010\u0015\u001a\u00020\n2\u0006\u0010\u0016\u001a\u00020\n2\u0006\u0010\u0017\u001a\u00020\u0018H\u0002J\u000e\u0010)\u001a\u00020\f2\u0006\u0010*\u001a\u00020\nJ\u0006\u0010+\u001a\u00020\u001cJ\u0017\u0010,\u001a\b\u0012\u0004\u0012\u00020$0#H\u0086@\u00f8\u0001\u0000\u00a2\u0006\u0002\u0010\u0010J\u0010\u0010-\u001a\u00020\u001c2\b\u0010\u0007\u001a\u0004\u0018\u00010\bR\u000e\u0010\u0005\u001a\u00020\u0006X\u0082\u0004\u00a2\u0006\u0002\n\u0000R\u0010\u0010\u0007\u001a\u0004\u0018\u00010\bX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u0010\u0010\t\u001a\u0004\u0018\u00010\nX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0002\u001a\u00020\u0003X\u0082\u0004\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u000b\u001a\u00020\fX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u0010\u0010\r\u001a\u0004\u0018\u00010\u000eX\u0082\u000e\u00a2\u0006\u0002\n\u0000\u0082\u0002\u0004\n\u0002\b\u0019\u00a8\u00060"}, d2 = {"Lcom/nfc/app/PuQuPrinterManager;", "", "context", "Landroid/content/Context;", "(Landroid/content/Context;)V", "bluetoothScanner", "Lcom/nfc/app/bluetooth/BluetoothScanner;", "callback", "Lcom/nfc/app/PuQuPrinterManager$PrinterCallback;", "connectedAddress", "", "isConnected", "", "printManager", "Lcom/puqu/sdk/PuQuPrintManager;", "autoConnect", "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "autoPrintReceipt", "cardNumber", "carNumber", "unitName", "deviceName", "amount", "readTime", "", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;", "checkBluetoothStatus", "connectToPrinter", "", "address", "disconnect", "findClassicAddressForAVPrinter", "bleDeviceName", "bleAddress", "getAllPrinters", "", "Landroid/bluetooth/BluetoothDevice;", "initialize", "isDevicePaired", "isPrinterConnected", "printReceiptContent", "printTestText", "text", "release", "scanAndGetAQPrinters", "setCallback", "Companion", "PrinterCallback", "app_debug"})
+@kotlin.Metadata(mv = {1, 8, 0}, k = 1, d1 = {"\u0000N\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0000\n\u0002\u0010\u000b\n\u0000\n\u0002\u0018\u0002\n\u0002\b\t\n\u0002\u0010\t\n\u0002\b\u0003\n\u0002\u0010\u0002\n\u0002\b\u0006\n\u0002\u0010 \n\u0002\u0018\u0002\n\u0002\b\u0010\u0018\u0000 22\u00020\u0001:\u000223B\r\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0002\u0010\u0004J\u0011\u0010\u000f\u001a\u00020\fH\u0086@\u00f8\u0001\u0000\u00a2\u0006\u0002\u0010\u0010JA\u0010\u0011\u001a\u00020\f2\u0006\u0010\u0012\u001a\u00020\n2\u0006\u0010\u0013\u001a\u00020\n2\u0006\u0010\u0014\u001a\u00020\n2\u0006\u0010\u0015\u001a\u00020\n2\u0006\u0010\u0016\u001a\u00020\n2\u0006\u0010\u0017\u001a\u00020\u0018H\u0086@\u00f8\u0001\u0000\u00a2\u0006\u0002\u0010\u0019J\b\u0010\u001a\u001a\u0004\u0018\u00010\nJ\u000e\u0010\u001b\u001a\u00020\u001c2\u0006\u0010\u001d\u001a\u00020\nJ\u0006\u0010\u001e\u001a\u00020\u001cJ\u0018\u0010\u001f\u001a\u0004\u0018\u00010\n2\u0006\u0010 \u001a\u00020\n2\u0006\u0010!\u001a\u00020\nJ\f\u0010\"\u001a\b\u0012\u0004\u0012\u00020$0#J\f\u0010%\u001a\b\u0012\u0004\u0012\u00020$0#J\u0006\u0010&\u001a\u00020\u001cJ\u0010\u0010\'\u001a\u00020\f2\u0006\u0010\u001d\u001a\u00020\nH\u0002J\u0006\u0010(\u001a\u00020\fJ8\u0010)\u001a\u00020\f2\u0006\u0010\u0012\u001a\u00020\n2\u0006\u0010\u0013\u001a\u00020\n2\u0006\u0010\u0014\u001a\u00020\n2\u0006\u0010\u0015\u001a\u00020\n2\u0006\u0010\u0016\u001a\u00020\n2\u0006\u0010\u0017\u001a\u00020\u0018H\u0002J\u000e\u0010*\u001a\u00020\f2\u0006\u0010+\u001a\u00020\nJI\u0010,\u001a\u00020\f2\u0006\u0010-\u001a\u00020\n2\u0006\u0010\u0012\u001a\u00020\n2\u0006\u0010\u0013\u001a\u00020\n2\u0006\u0010\u0014\u001a\u00020\n2\u0006\u0010\u0015\u001a\u00020\n2\u0006\u0010\u0016\u001a\u00020\n2\u0006\u0010\u0017\u001a\u00020\u0018H\u0086@\u00f8\u0001\u0000\u00a2\u0006\u0002\u0010.J\u0006\u0010/\u001a\u00020\u001cJ\u0017\u00100\u001a\b\u0012\u0004\u0012\u00020$0#H\u0086@\u00f8\u0001\u0000\u00a2\u0006\u0002\u0010\u0010J\u0010\u00101\u001a\u00020\u001c2\b\u0010\u0007\u001a\u0004\u0018\u00010\bR\u000e\u0010\u0005\u001a\u00020\u0006X\u0082\u0004\u00a2\u0006\u0002\n\u0000R\u0010\u0010\u0007\u001a\u0004\u0018\u00010\bX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u0010\u0010\t\u001a\u0004\u0018\u00010\nX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u0002\u001a\u00020\u0003X\u0082\u0004\u00a2\u0006\u0002\n\u0000R\u000e\u0010\u000b\u001a\u00020\fX\u0082\u000e\u00a2\u0006\u0002\n\u0000R\u0010\u0010\r\u001a\u0004\u0018\u00010\u000eX\u0082\u000e\u00a2\u0006\u0002\n\u0000\u0082\u0002\u0004\n\u0002\b\u0019\u00a8\u00064"}, d2 = {"Lcom/nfc/app/PuQuPrinterManager;", "", "context", "Landroid/content/Context;", "(Landroid/content/Context;)V", "bluetoothScanner", "Lcom/nfc/app/bluetooth/BluetoothScanner;", "callback", "Lcom/nfc/app/PuQuPrinterManager$PrinterCallback;", "connectedAddress", "", "isConnected", "", "printManager", "Lcom/puqu/sdk/PuQuPrintManager;", "autoConnect", "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "autoPrintReceipt", "cardNumber", "carNumber", "unitName", "deviceName", "amount", "readTime", "", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;", "checkBluetoothStatus", "connectToPrinter", "", "address", "disconnect", "findClassicAddressForAVPrinter", "bleDeviceName", "bleAddress", "getAllPrinters", "", "Landroid/bluetooth/BluetoothDevice;", "getPairedPrinters", "initialize", "isDevicePaired", "isPrinterConnected", "printReceiptContent", "printTestText", "text", "printToAddress", "printerAddress", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;", "release", "scanAndGetAQPrinters", "setCallback", "Companion", "PrinterCallback", "app_debug"})
 public final class PuQuPrinterManager {
     private final android.content.Context context = null;
     private com.puqu.sdk.PuQuPrintManager printManager;
@@ -53,6 +53,15 @@ public final class PuQuPrinterManager {
      */
     @org.jetbrains.annotations.NotNull
     public final java.util.List<android.bluetooth.BluetoothDevice> getAllPrinters() {
+        return null;
+    }
+    
+    /**
+     * 获取已配对的 AQ-V 打印机
+     * 用于用户选择打印机
+     */
+    @org.jetbrains.annotations.NotNull
+    public final java.util.List<android.bluetooth.BluetoothDevice> getPairedPrinters() {
         return null;
     }
     
@@ -114,6 +123,22 @@ public final class PuQuPrinterManager {
      */
     @org.jetbrains.annotations.Nullable
     public final java.lang.Object autoPrintReceipt(@org.jetbrains.annotations.NotNull
+    java.lang.String cardNumber, @org.jetbrains.annotations.NotNull
+    java.lang.String carNumber, @org.jetbrains.annotations.NotNull
+    java.lang.String unitName, @org.jetbrains.annotations.NotNull
+    java.lang.String deviceName, @org.jetbrains.annotations.NotNull
+    java.lang.String amount, long readTime, @org.jetbrains.annotations.NotNull
+    kotlin.coroutines.Continuation<? super java.lang.Boolean> continuation) {
+        return null;
+    }
+    
+    /**
+     * 打印到指定地址的打印机
+     * 用于用户选择打印机后打印
+     */
+    @org.jetbrains.annotations.Nullable
+    public final java.lang.Object printToAddress(@org.jetbrains.annotations.NotNull
+    java.lang.String printerAddress, @org.jetbrains.annotations.NotNull
     java.lang.String cardNumber, @org.jetbrains.annotations.NotNull
     java.lang.String carNumber, @org.jetbrains.annotations.NotNull
     java.lang.String unitName, @org.jetbrains.annotations.NotNull
