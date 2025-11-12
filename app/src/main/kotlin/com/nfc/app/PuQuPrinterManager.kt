@@ -104,7 +104,7 @@ class PuQuPrinterManager(private val context: Context) {
     
     /**
      * 获取所有已配对的打印机设备
-     * 优先返回打印机类型设备,支持 AV/Printer/GP-/XP- 等
+     * 优先返回 AQ-V 开头的打印机 (AV系列)
      */
     fun getAllPrinters(): List<BluetoothDevice> {
         val btAdapter = BluetoothAdapter.getDefaultAdapter() ?: return emptyList()
@@ -114,10 +114,21 @@ class PuQuPrinterManager(private val context: Context) {
                 !it.name.isNullOrEmpty() 
             }.toList()
             
-            // 打印机关键词
-            val printerKeywords = listOf("printer", "print", "打印", "AV", "AQ", "GP-", "XP-")
+            // 优先查找 AQ-V 开头的打印机 (AV系列)
+            val avPrinters = allDevices.filter { device ->
+                device.name.startsWith("AQ-V", ignoreCase = true)
+            }
             
-            // 过滤打印机设备
+            if (avPrinters.isNotEmpty()) {
+                Log.d(TAG, "✓ 找到 ${avPrinters.size} 个 AQ-V 系列打印机")
+                avPrinters.forEach { device ->
+                    Log.d(TAG, "  - ${device.name} (${device.address})")
+                }
+                return avPrinters
+            }
+            
+            // 如果没有 AQ-V,再查找其他打印机关键词
+            val printerKeywords = listOf("printer", "print", "打印", "AV", "AQ", "GP-", "XP-")
             val printers = allDevices.filter { device ->
                 printerKeywords.any { keyword -> 
                     device.name.contains(keyword, ignoreCase = true) 
@@ -299,22 +310,31 @@ class PuQuPrinterManager(private val context: Context) {
             Log.d(TAG, "========== 开始自动打印 ==========")
             Log.d(TAG, "卡号: $cardNumber, 车号: $carNumber, 金额: $amount")
             
-            // 1. 自动连接打印机
-            Log.d(TAG, "步骤1: 查找并连接打印机...")
+            // 1. 自动连接打印机 (每次重新搜索 AQ-V 打印机)
+            Log.d(TAG, "步骤1: 搜索 AQ-V 系列打印机...")
             val printers = getAllPrinters()
             if (printers.isEmpty()) {
-                Log.e(TAG, "❌ 未找到已配对的打印机")
-                callback?.onPrintFailed("未找到打印机,请先配对")
+                Log.e(TAG, "❌ 未找到已配对的 AQ-V 打印机")
+                callback?.onPrintFailed("未找到 AQ-V 打印机,请先在系统设置中配对")
                 return false
             }
             
-            // 优先选择 AV/AQ 打印机
-            val targetPrinter = printers.find { 
-                it.name.contains("AV", ignoreCase = true) || 
-                it.name.contains("AQ", ignoreCase = true) 
-            } ?: printers.first()
+            // 选择第一个 AQ-V 打印机 (每次都重新选择,支持更换打印机)
+            val targetPrinter = printers.first()
             
-            Log.d(TAG, "选择打印机: ${targetPrinter.name} (${targetPrinter.address})")
+            Log.d(TAG, "========== 选中打印机 ==========")
+            Log.d(TAG, "打印机名称: ${targetPrinter.name}")
+            Log.d(TAG, "打印机地址: ${targetPrinter.address}")
+            Log.d(TAG, "======================================")
+            
+            // 如果是不同的打印机,先断开旧连接
+            if (isConnected && connectedAddress != targetPrinter.address) {
+                Log.d(TAG, "检测到更换打印机,断开旧连接: $connectedAddress")
+                printManager?.closePrinter()
+                isConnected = false
+                connectedAddress = null
+                kotlinx.coroutines.delay(1000)
+            }
             
             // 连接打印机
             if (!isConnected || connectedAddress != targetPrinter.address) {
