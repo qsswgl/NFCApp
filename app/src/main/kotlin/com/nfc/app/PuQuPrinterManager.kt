@@ -6,6 +6,7 @@ import android.content.Context
 import android.util.Log
 import com.puqu.sdk.PuQuPrintManager
 import com.puqu.sdk.Base.PuQuPrint
+import com.nfc.app.bluetooth.BluetoothScanner
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import java.io.ByteArrayOutputStream
@@ -28,6 +29,7 @@ class PuQuPrinterManager(private val context: Context) {
     private var printManager: PuQuPrintManager? = null
     private var isConnected = false
     private var connectedAddress: String? = null
+    private val bluetoothScanner = BluetoothScanner(context)
     
     // 回调接口
     interface PrinterCallback {
@@ -146,6 +148,78 @@ class PuQuPrinterManager(private val context: Context) {
         } catch (e: Exception) {
             Log.e(TAG, "获取配对设备失败", e)
             emptyList()
+        }
+    }
+    
+    /**
+     * 扫描并查找 AQ-V 打印机
+     * @return 已配对的 AQ-V 打印机列表
+     */
+    suspend fun scanAndGetAQPrinters(): List<BluetoothDevice> = suspendCancellableCoroutine { continuation ->
+        Log.d(TAG, "========== 开始扫描 AQ-V 打印机 ==========")
+        
+        // 检查蓝牙状态
+        if (!bluetoothScanner.isBluetoothEnabled()) {
+            Log.e(TAG, "蓝牙未开启")
+            continuation.resume(emptyList())
+            return@suspendCancellableCoroutine
+        }
+        
+        if (!bluetoothScanner.checkBluetoothPermissions()) {
+            Log.e(TAG, "缺少蓝牙权限")
+            continuation.resume(emptyList())
+            return@suspendCancellableCoroutine
+        }
+        
+        // 先获取已配对的打印机
+        val pairedPrinters = bluetoothScanner.getPairedAQPrinters()
+        if (pairedPrinters.isNotEmpty()) {
+            Log.d(TAG, "✓ 找到 ${pairedPrinters.size} 个已配对的 AQ-V 打印机:")
+            pairedPrinters.forEach { device ->
+                Log.d(TAG, "  - ${device.name} (${device.address})")
+            }
+            continuation.resume(pairedPrinters)
+            return@suspendCancellableCoroutine
+        }
+        
+        // 如果没有已配对的,进行BLE扫描
+        Log.d(TAG, "未找到已配对的 AQ-V 打印机,开始 BLE 扫描...")
+        bluetoothScanner.startScan(10000, object : BluetoothScanner.ScanCallback {
+            override fun onDeviceFound(device: BluetoothDevice, rssi: Int) {
+                Log.d(TAG, "扫描到: ${device.name} (${device.address}) RSSI: $rssi")
+            }
+            
+            override fun onScanComplete(devices: List<BluetoothDevice>) {
+                Log.d(TAG, "扫描完成,发现 ${devices.size} 个 AQ-V 打印机")
+                
+                // 检查这些设备是否已配对
+                val pairedDevices = devices.filter { device ->
+                    isDevicePaired(device.address)
+                }
+                
+                if (pairedDevices.isEmpty() && devices.isNotEmpty()) {
+                    Log.w(TAG, "发现打印机但未配对,需要先在系统设置中配对")
+                }
+                
+                continuation.resume(pairedDevices)
+            }
+            
+            override fun onScanFailed(error: String) {
+                Log.e(TAG, "扫描失败: $error")
+                continuation.resume(emptyList())
+            }
+        })
+    }
+    
+    /**
+     * 检查设备是否已配对
+     */
+    private fun isDevicePaired(address: String): Boolean {
+        val btAdapter = BluetoothAdapter.getDefaultAdapter() ?: return false
+        return try {
+            btAdapter.bondedDevices?.any { it.address == address } ?: false
+        } catch (e: SecurityException) {
+            false
         }
     }
     
@@ -310,20 +384,29 @@ class PuQuPrinterManager(private val context: Context) {
             Log.d(TAG, "========== 开始自动打印 ==========")
             Log.d(TAG, "卡号: $cardNumber, 车号: $carNumber, 金额: $amount")
             
-            // 1. 自动连接打印机 (每次重新搜索 AQ-V 打印机)
-            Log.d(TAG, "步骤1: 搜索 AQ-V 系列打印机...")
-            val printers = getAllPrinters()
+            // 1. 扫描并查找 AQ-V 打印机
+            Log.d(TAG, "步骤1: 扫描 AQ-V 系列打印机...")
+            val printers = scanAndGetAQPrinters()
+            
             if (printers.isEmpty()) {
                 Log.e(TAG, "❌ 未找到已配对的 AQ-V 打印机")
-                callback?.onPrintFailed("未找到 AQ-V 打印机,请先在系统设置中配对")
+                callback?.onPrintFailed("未找到 AQ-V 打印机!\n\n请确保:\n• 打印机已开机\n• 已在系统设置中配对 AQ-V 打印机\n• 打印机名称以 AQ-V 开头")
                 return false
             }
             
-            // 选择第一个 AQ-V 打印机 (每次都重新选择,支持更换打印机)
+            // 选择第一个 AQ-V 打印机 (如果有多个,选择第一个)
             val targetPrinter = printers.first()
             
             Log.d(TAG, "========== 选中打印机 ==========")
             Log.d(TAG, "打印机名称: ${targetPrinter.name}")
+            Log.d(TAG, "打印机地址: ${targetPrinter.address}")
+            if (printers.size > 1) {
+                Log.d(TAG, "注意: 发现 ${printers.size} 个打印机,已选择第一个")
+                printers.drop(1).forEach { p ->
+                    Log.d(TAG, "  其他: ${p.name} (${p.address})")
+                }
+            }
+            Log.d(TAG, "======================================")
             Log.d(TAG, "打印机地址: ${targetPrinter.address}")
             Log.d(TAG, "======================================")
             
