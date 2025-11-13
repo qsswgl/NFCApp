@@ -1,0 +1,1 @@
+11-13 08:00:51.196 E/PuQuPrinterManager(21883): java.lang.SecurityException: Need android.permission.BLUETOOTH_CONNECT permission for AttributionSource { uid = 10320, packageName = com.nfc.app, attributionTag = null, token = android.os.BinderProxy@ef5c172, next = null }: AdapterService getBondedDevices

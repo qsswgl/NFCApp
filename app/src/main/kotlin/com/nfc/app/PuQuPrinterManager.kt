@@ -375,26 +375,35 @@ class PuQuPrinterManager(private val context: Context) {
             Log.d(TAG, "========== SDK连接请求 ==========")
             Log.d(TAG, "目标地址: $address")
             
-            // 检查是否已连接
-            if (isConnected && connectedAddress == address) {
-                Log.w(TAG, "已连接到此设备,无需重复连接")
+            // 检查是否已连接到相同设备
+            if (printManager?.isConnected == true && connectedAddress == address) {
+                Log.d(TAG, "✓ 已连接到此设备")
+                isConnected = true
                 return
             }
             
             // 断开旧连接
-            if (isConnected) {
+            if (printManager?.isConnected == true) {
                 Log.w(TAG, "断开旧连接...")
-                printManager?.closePrinter()
-                Thread.sleep(500)
+                try {
+                    printManager?.closePrinter()
+                    Thread.sleep(500)
+                } catch (e: Exception) {
+                    Log.e(TAG, "断开连接异常", e)
+                }
             }
             
             connectedAddress = address
-            Log.d(TAG, "调用 SDK openPrinter...")
+            isConnected = false
+            
+            Log.d(TAG, "调用 SDK openPrinter($address)...")
+            Log.d(TAG, "注意: SDK需要设备已经在系统蓝牙中配对")
             printManager?.openPrinter(address)
-            Log.d(TAG, "SDK 调用完成,等待回调 (约6秒)...")
+            Log.d(TAG, "SDK openPrinter调用完成,等待连接回调 (约6秒)...")
             
         } catch (e: Exception) {
-            Log.e(TAG, "连接打印机失败", e)
+            Log.e(TAG, "❌ 连接打印机异常", e)
+            e.printStackTrace()
             callback?.onPrintFailed("连接失败: ${e.message}")
         }
     }
@@ -538,10 +547,14 @@ class PuQuPrinterManager(private val context: Context) {
             // 如果是不同的打印机,先断开旧连接
             if (isConnected && connectedAddress != printerAddress) {
                 Log.d(TAG, "检测到更换打印机,断开旧连接: $connectedAddress")
-                printManager?.closePrinter()
-                isConnected = false
-                connectedAddress = null
-                kotlinx.coroutines.delay(1000)
+                try {
+                    printManager?.closePrinter()
+                    isConnected = false
+                    connectedAddress = null
+                    Thread.sleep(1000)
+                } catch (e: Exception) {
+                    Log.e(TAG, "断开旧连接异常", e)
+                }
             }
             
             // 连接打印机
@@ -553,7 +566,7 @@ class PuQuPrinterManager(private val context: Context) {
                 Log.d(TAG, "等待连接...")
                 var waitTime = 0
                 while (!isConnected && waitTime < 20000) {
-                    kotlinx.coroutines.delay(1000)
+                    Thread.sleep(1000)
                     waitTime += 1000
                     if (waitTime % 5000 == 0) {
                         Log.d(TAG, "等待连接中... ${waitTime/1000}秒")

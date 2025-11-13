@@ -904,7 +904,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         unitName: String,
         deviceName: String,
         amount: String
-    ) {
+    ) = withContext(Dispatchers.IO) {
         Log.d(TAG, "开始打印第1份小票...")
         val printSuccess1 = puquPrinter.printToAddress(
             printerAddress = printerAddress,
@@ -920,7 +920,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             Log.d(TAG, "✓ 第1份小票打印成功")
             
             // 延迟2秒后打印第2份
-            kotlinx.coroutines.delay(2000)
+            Thread.sleep(2000)
             
             Log.d(TAG, "开始打印第2份小票...")
             val printSuccess2 = puquPrinter.printToAddress(
