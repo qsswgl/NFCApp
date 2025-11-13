@@ -738,8 +738,9 @@ class PuQuPrinterManager(private val context: Context) {
         return try {
             Log.d(TAG, "========== 开始生成打印内容 ==========")
             
+            // 显示到分钟（不显示秒）
             val dateStr = SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd HH:mm",
                 Locale.getDefault()
             ).format(Date(readTime))
             
@@ -753,7 +754,8 @@ class PuQuPrinterManager(private val context: Context) {
             // 步骤2: 标题 - 居中,粗体,大字体
             Log.d(TAG, "步骤2: 打印标题")
             currentManager.setLeft(0)
-            currentManager.setFontSize(36f)
+            // 将标题字体放大20%
+            currentManager.setFontSize(43.2f)
             currentManager.setAlignment(1)  // 1=居中
             currentManager.setBold(true)
             currentManager.addText("===== 缴费小票 =====")
@@ -796,7 +798,8 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.setAlignment(0)  // 左对齐
             currentManager.setFontSize(32f)
             currentManager.addText("客户签字：___________________")
-            currentManager.addBlank(80)
+            // 减少打印后走纸量 -> 约2cm
+            currentManager.addBlank(20)
             
             // 步骤5: 在后台线程执行打印,并等待完成
             Log.d(TAG, "步骤5: 后台线程执行 printJob()")
