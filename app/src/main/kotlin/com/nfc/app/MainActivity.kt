@@ -1790,7 +1790,23 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         return try {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
             val date = dateFormat.parse(dateStr)
-            date?.time ?: System.currentTimeMillis()
+            if (date != null) {
+                // 如果只有日期（无时分），将时分替换为当前时间的时分
+                val cal = Calendar.getInstance()
+                val nowHour = cal.get(Calendar.HOUR_OF_DAY)
+                val nowMinute = cal.get(Calendar.MINUTE)
+
+                val targetCal = Calendar.getInstance()
+                targetCal.time = date
+                targetCal.set(Calendar.HOUR_OF_DAY, nowHour)
+                targetCal.set(Calendar.MINUTE, nowMinute)
+                targetCal.set(Calendar.SECOND, 0)
+                targetCal.set(Calendar.MILLISECOND, 0)
+
+                return targetCal.timeInMillis
+            }
+
+            System.currentTimeMillis()
         } catch (e: Exception) {
             Log.e(TAG, "日期解析失败: $dateStr", e)
             System.currentTimeMillis()

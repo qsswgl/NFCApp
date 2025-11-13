@@ -766,7 +766,8 @@ class PuQuPrinterManager(private val context: Context) {
             Log.d(TAG, "步骤3: 打印内容")
             currentManager.setLeft(16)
             currentManager.setBold(false)
-            currentManager.setFontSize(36f)  // 字号增大50%: 24f → 36f
+            // 卡号字号缩小5%（从 36f -> 34.2f）
+            currentManager.setFontSize(34.2f)
             currentManager.setAlignment(0)  // 0=左对齐
             
             currentManager.addText("卡号: $cardNumber")
@@ -800,8 +801,8 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.setFontSize(32f)
             currentManager.addText("客户签字：___________________")
             // 减少打印后走纸量 -> 目标 2cm
-            // 初始尝试改为较小的值 4，现场测量后再微调
-            currentManager.addBlank(4)
+            // 将走纸量设置为 1 单位以尽量靠近 1cm，若仍不准确请反馈实测值
+            currentManager.addBlank(1)
             
             // 步骤5: 在后台线程执行打印,并等待完成
             Log.d(TAG, "步骤5: 后台线程执行 printJob()")
