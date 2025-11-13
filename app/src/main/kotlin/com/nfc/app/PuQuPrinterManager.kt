@@ -748,8 +748,8 @@ class PuQuPrinterManager(private val context: Context) {
             Log.d(TAG, "步骤1: startJob(400, -1)")
             currentManager.startJob(400, -1)
             
-            // 保留顶部1cm空白 (约40像素)
-            currentManager.addBlank(40)
+            // 保留顶部约0.3cm空白，减少纸张浪费
+            currentManager.addBlank(10)
             
             // 步骤2: 标题 - 居中,粗体,大字体
             Log.d(TAG, "步骤2: 打印标题")
@@ -760,17 +760,17 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.setBold(true)
             // 标题两侧保留两个等号
             currentManager.addText("== 缴费小票 ==")
-            currentManager.addBlank(16)
+            currentManager.addBlank(6)
             
             // 步骤3: 内容 - 左对齐,字号增大50% (24f → 36f)
             Log.d(TAG, "步骤3: 打印内容")
             currentManager.setLeft(16)
             currentManager.setBold(false)
             // 卡号字号缩小5%（从 36f -> 34.2f）
-            currentManager.setFontSize(34.2f)
             currentManager.setAlignment(0)  // 0=左对齐
-            
+            currentManager.setFontSize(34.2f)
             currentManager.addText("卡号: $cardNumber")
+            currentManager.setFontSize(36f)
             currentManager.addText("车号: $carNumber")
             
             if (unitName.isNotEmpty()) {
@@ -786,23 +786,22 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.addText("金额: $amount 元")
             currentManager.setBold(false)
             
-            currentManager.addBlank(8)
+            currentManager.addBlank(4)
             currentManager.addText("时间: $dateStr")
-            currentManager.addBlank(24)
+            currentManager.addBlank(6)
             
             // 步骤4: 底部 - 居中
             currentManager.setAlignment(1)
             currentManager.addText("- - - - - - - - - - - - - - - -")
             currentManager.addText("谢谢惠顾!")
-            currentManager.addBlank(24)
+            currentManager.addBlank(6)
             
             // 客户签字
             currentManager.setAlignment(0)  // 左对齐
             currentManager.setFontSize(32f)
             currentManager.addText("客户签字：___________________")
-            // 减少打印后走纸量 -> 目标 2cm
-            // 将走纸量设置为 1 单位以尽量靠近 1cm，若仍不准确请反馈实测值
-            currentManager.addBlank(1)
+            // 减少打印后走纸量 -> 目标小于 1cm
+            currentManager.addBlank(0)
             
             // 步骤5: 在后台线程执行打印,并等待完成
             Log.d(TAG, "步骤5: 后台线程执行 printJob()")

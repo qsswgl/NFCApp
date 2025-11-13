@@ -228,9 +228,9 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val btnSelectPrinter = findViewById<LinearLayout?>(getResId("btn_select_printer", "id"))
             val recyclerView = findViewById<RecyclerView>(getResId("recycler_view_records", "id"))
             
-            // 初始化日期为今天
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
-            fuelDate = dateFormat.format(Calendar.getInstance().time)
+            // 初始化日期为当前时间 (精确到分钟)
+            val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+            fuelDate = dateTimeFormat.format(Calendar.getInstance().time)
             tvFuelDate.text = fuelDate
             
             // 设置日期选择器点击事件
@@ -1740,8 +1740,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             // 如果已经有选中的日期,使用它
             if (fuelDate.isNotEmpty()) {
                 try {
-                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
-                    val date = dateFormat.parse(fuelDate)
+                    val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+                    val date = dateTimeFormat.parse(fuelDate)
                     if (date != null) {
                         calendar.time = date
                     }
@@ -1757,11 +1757,19 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val datePickerDialog = DatePickerDialog(
                 this,
                 { _, selectedYear, selectedMonth, selectedDay ->
-                    // 更新选中的日期
-                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
-                    val selectedCalendar = Calendar.getInstance()
-                    selectedCalendar.set(selectedYear, selectedMonth, selectedDay)
-                    fuelDate = dateFormat.format(selectedCalendar.time)
+                    // 更新选中的日期 (保留当前时间的时分)
+                    val nowCalendar = Calendar.getInstance()
+                    val selectedCalendar = Calendar.getInstance().apply {
+                        set(Calendar.YEAR, selectedYear)
+                        set(Calendar.MONTH, selectedMonth)
+                        set(Calendar.DAY_OF_MONTH, selectedDay)
+                        set(Calendar.HOUR_OF_DAY, nowCalendar.get(Calendar.HOUR_OF_DAY))
+                        set(Calendar.MINUTE, nowCalendar.get(Calendar.MINUTE))
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }
+                    val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+                    fuelDate = dateTimeFormat.format(selectedCalendar.time)
                     tvFuelDate.text = fuelDate
                     
                     Log.d(TAG, "用户选择加油日期: $fuelDate")
@@ -1783,27 +1791,36 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     
     /**
      * 将日期字符串转换为时间戳
-     * @param dateStr 格式: yyyy-MM-dd
+    * @param dateStr 格式: yyyy-MM-dd HH:mm (兼容旧格式)
      * @return 时间戳 (毫秒)
      */
     private fun parseDateToTimestamp(dateStr: String): Long {
         return try {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
-            val date = dateFormat.parse(dateStr)
+            val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+            val date = try {
+                dateTimeFormat.parse(dateStr)
+            } catch (formatException: Exception) {
+                Log.w(TAG, "使用日期时间格式解析失败，尝试日期格式: $dateStr", formatException)
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+                dateFormat.parse(dateStr)?.let { parsedDate ->
+                    val cal = Calendar.getInstance()
+                    val nowHour = cal.get(Calendar.HOUR_OF_DAY)
+                    val nowMinute = cal.get(Calendar.MINUTE)
+
+                    Calendar.getInstance().apply {
+                        time = parsedDate
+                        set(Calendar.HOUR_OF_DAY, nowHour)
+                        set(Calendar.MINUTE, nowMinute)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.time
+                }
+            }
             if (date != null) {
-                // 如果只有日期（无时分），将时分替换为当前时间的时分
-                val cal = Calendar.getInstance()
-                val nowHour = cal.get(Calendar.HOUR_OF_DAY)
-                val nowMinute = cal.get(Calendar.MINUTE)
-
-                val targetCal = Calendar.getInstance()
-                targetCal.time = date
-                targetCal.set(Calendar.HOUR_OF_DAY, nowHour)
-                targetCal.set(Calendar.MINUTE, nowMinute)
-                targetCal.set(Calendar.SECOND, 0)
-                targetCal.set(Calendar.MILLISECOND, 0)
-
-                return targetCal.timeInMillis
+                val cal = Calendar.getInstance().apply { time = date }
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                return cal.timeInMillis
             }
 
             System.currentTimeMillis()
