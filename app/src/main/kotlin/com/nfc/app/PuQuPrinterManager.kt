@@ -758,7 +758,8 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.setFontSize(43.2f)
             currentManager.setAlignment(1)  // 1=居中
             currentManager.setBold(true)
-            currentManager.addText("===== 缴费小票 =====")
+            // 标题两侧保留两个等号
+            currentManager.addText("== 缴费小票 ==")
             currentManager.addBlank(16)
             
             // 步骤3: 内容 - 左对齐,字号增大50% (24f → 36f)
@@ -798,8 +799,9 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.setAlignment(0)  // 左对齐
             currentManager.setFontSize(32f)
             currentManager.addText("客户签字：___________________")
-            // 减少打印后走纸量 -> 约2cm
-            currentManager.addBlank(20)
+            // 减少打印后走纸量 -> 目标 2cm
+            // 初始尝试改为较小的值 4，现场测量后再微调
+            currentManager.addBlank(4)
             
             // 步骤5: 在后台线程执行打印,并等待完成
             Log.d(TAG, "步骤5: 后台线程执行 printJob()")
