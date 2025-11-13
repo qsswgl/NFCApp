@@ -255,6 +255,42 @@ class PuQuPrinterManager(private val context: Context) {
     }
     
     /**
+     * 判断设备地址是否可能是 BLE 设备
+     * 通过查询已配对设备列表,看是否存在同名但不同地址的 Classic 设备
+     */
+    private fun isLikelyBLEAddress(address: String): Boolean {
+        val btAdapter = BluetoothAdapter.getDefaultAdapter() ?: return false
+        
+        return try {
+            // 查找此地址对应的设备
+            val device = btAdapter.bondedDevices?.find {
+                it.address.equals(address, ignoreCase = true)
+            }
+            
+            if (device == null) {
+                // 地址未配对,可能是 BLE
+                return true
+            }
+            
+            // 如果设备名包含 "(BLE)",肯定是 BLE
+            if (device.name.contains("(BLE)", ignoreCase = true)) {
+                return true
+            }
+            
+            // 检查是否存在同名但不同地址的设备 (Classic 版本)
+            val classicVersion = btAdapter.bondedDevices?.find {
+                it.name.equals(device.name, ignoreCase = true) && 
+                !it.address.equals(address, ignoreCase = true)
+            }
+            
+            classicVersion != null
+        } catch (e: Exception) {
+            Log.e(TAG, "判断 BLE 地址异常", e)
+            false
+        }
+    }
+    
+    /**
      * 根据 BLE 扫描设备查找对应的 Classic 配对设备
      * 
      * AV 打印机有两个地址:
@@ -304,6 +340,60 @@ class PuQuPrinterManager(private val context: Context) {
             null
         } catch (e: SecurityException) {
             Log.e(TAG, "检查配对状态权限异常", e)
+            null
+        }
+    }
+    
+    /**
+     * 智能转换 BLE 地址为 Classic 地址
+     * 用于打印时确保使用正确的地址
+     * 
+     * @param deviceNameOrAddress 设备名称或地址
+     * @param address 设备地址
+     * @return Classic 地址,如果无法转换则返回 null
+     */
+    private fun getClassicAddressForBLEDevice(deviceNameOrAddress: String, address: String): String? {
+        val btAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
+        
+        Log.d(TAG, "尝试转换 BLE -> Classic 地址")
+        Log.d(TAG, "输入: $deviceNameOrAddress / $address")
+        
+        return try {
+            // 先查找这个地址对应的设备
+            val bleDevice = btAdapter.bondedDevices?.find {
+                it.address.equals(address, ignoreCase = true)
+            }
+            
+            if (bleDevice != null) {
+                // 找到了这个地址的设备,去掉 "(BLE)" 后缀查找 Classic 版本
+                val classicName = bleDevice.name.replace("(BLE)", "").trim()
+                
+                val classicDevice = btAdapter.bondedDevices?.find {
+                    it.name.equals(classicName, ignoreCase = true) && 
+                    !it.address.equals(address, ignoreCase = true)
+                }
+                
+                if (classicDevice != null) {
+                    Log.d(TAG, "✓ 找到 Classic 设备: ${classicDevice.name} (${classicDevice.address})")
+                    return classicDevice.address
+                }
+            }
+            
+            // 尝试作为设备名称处理
+            val cleanName = deviceNameOrAddress.replace("(BLE)", "").trim()
+            val device = btAdapter.bondedDevices?.find {
+                it.name.equals(cleanName, ignoreCase = true)
+            }
+            
+            if (device != null) {
+                Log.d(TAG, "✓ 通过名称找到设备: ${device.name} (${device.address})")
+                return device.address
+            }
+            
+            Log.w(TAG, "❌ 未找到对应的 Classic 设备")
+            null
+        } catch (e: Exception) {
+            Log.e(TAG, "地址转换异常", e)
             null
         }
     }
@@ -534,7 +624,26 @@ class PuQuPrinterManager(private val context: Context) {
     ): Boolean {
         return try {
             Log.d(TAG, "========== 打印到指定打印机 ==========")
-            Log.d(TAG, "打印机地址: $printerAddress")
+            Log.d(TAG, "原始地址: $printerAddress")
+            
+            // 关键修复: 如果是 BLE 设备,转换为 Classic 地址
+            val actualAddress = if (printerAddress.contains("(BLE)", ignoreCase = true) || 
+                                   isLikelyBLEAddress(printerAddress)) {
+                Log.d(TAG, "检测到 BLE 设备,尝试获取 Classic 地址...")
+                val classicAddr = getClassicAddressForBLEDevice(printerAddress, printerAddress)
+                if (classicAddr != null) {
+                    Log.d(TAG, "✓ 已转换: BLE -> Classic 地址: $classicAddr")
+                    classicAddr
+                } else {
+                    Log.w(TAG, "⚠️ 未找到 Classic 地址,使用原始地址 (可能失败)")
+                    printerAddress
+                }
+            } else {
+                Log.d(TAG, "使用原始地址 (可能已是 Classic)")
+                printerAddress
+            }
+            
+            Log.d(TAG, "实际连接地址: $actualAddress")
             Log.d(TAG, "卡号: $cardNumber, 车号: $carNumber, 金额: $amount")
             
             // 检查蓝牙状态
@@ -545,7 +654,7 @@ class PuQuPrinterManager(private val context: Context) {
             }
             
             // 如果是不同的打印机,先断开旧连接
-            if (isConnected && connectedAddress != printerAddress) {
+            if (isConnected && connectedAddress != actualAddress) {
                 Log.d(TAG, "检测到更换打印机,断开旧连接: $connectedAddress")
                 try {
                     printManager?.closePrinter()
@@ -557,10 +666,10 @@ class PuQuPrinterManager(private val context: Context) {
                 }
             }
             
-            // 连接打印机
-            if (!isConnected || connectedAddress != printerAddress) {
-                Log.d(TAG, "连接打印机: $printerAddress")
-                connectToPrinter(printerAddress)
+            // 连接打印机 (使用转换后的地址)
+            if (!isConnected || connectedAddress != actualAddress) {
+                Log.d(TAG, "连接打印机: $actualAddress")
+                connectToPrinter(actualAddress)
                 
                 // 等待连接成功 (最多20秒)
                 Log.d(TAG, "等待连接...")
@@ -689,20 +798,40 @@ class PuQuPrinterManager(private val context: Context) {
             currentManager.addText("客户签字：___________________")
             currentManager.addBlank(80)
             
-            // 步骤5: 在后台线程执行打印
+            // 步骤5: 在后台线程执行打印,并等待完成
             Log.d(TAG, "步骤5: 后台线程执行 printJob()")
-            Thread {
+            var printSuccess = false
+            var printError: Exception? = null
+            
+            val printThread = Thread {
                 try {
                     Log.d(TAG, "后台线程: 开始 printJob()...")
                     currentManager.printJob()
                     Log.d(TAG, "后台线程: printJob() 完成")
+                    printSuccess = true
                 } catch (e: Exception) {
                     Log.e(TAG, "后台线程: printJob() 异常", e)
+                    printError = e
                 }
-            }.start()
+            }
+            printThread.start()
             
-            Log.d(TAG, "========== 打印命令已发送 ==========")
-            true
+            // 等待打印线程完成 (最多10秒)
+            Log.d(TAG, "等待打印线程完成...")
+            printThread.join(10000)
+            
+            if (printThread.isAlive) {
+                Log.w(TAG, "⚠️ 打印线程超时 (10秒)")
+                return false
+            }
+            
+            if (printError != null) {
+                Log.e(TAG, "❌ 打印执行失败", printError)
+                return false
+            }
+            
+            Log.d(TAG, "========== 打印命令已完成 ==========")
+            printSuccess
             
         } catch (e: Exception) {
             Log.e(TAG, "❌ 打印内容生成失败", e)

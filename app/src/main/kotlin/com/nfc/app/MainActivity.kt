@@ -735,7 +735,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     unitName = unitName,
                     deviceName = deviceName,
                     amount = amount,
-                    readTime = System.currentTimeMillis(),
+                    readTime = parseDateToTimestamp(fuelDate), // 使用用户选择的日期
                     content = "消费记录: $amount 元",
                     uploadStatus = false
                 )
@@ -805,7 +805,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         carNumber = carNumber,
                         unitName = unitName,
                         deviceName = deviceName,
-                        amount = amount
+                        amount = amount,
+                        fuelDateStr = fuelDate  // 传递用户选择的日期
                     )
                 }
             } catch (e: Exception) {
@@ -825,7 +826,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         carNumber: String,
         unitName: String,
         deviceName: String,
-        amount: String
+        amount: String,
+        fuelDateStr: String  // 新增: 加油日期
     ) {
         lifecycleScope.launch {
             try {
@@ -855,7 +857,15 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         // 只有一个打印机,直接打印
                         val printer = printers[0]
                         Log.d(TAG, "发现1个打印机,自动选择: ${printer.name}")
-                        printReceipts(printer.address, cardNumber, carNumber, unitName, deviceName, amount)
+                        printReceipts(
+                            printer.address, 
+                            cardNumber, 
+                            carNumber, 
+                            unitName, 
+                            deviceName, 
+                            amount,
+                            fuelDateStr  // 传递日期
+                        )
                     }
                     
                     else -> {
@@ -876,7 +886,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             carNumber,
                                             unitName,
                                             deviceName,
-                                            amount
+                                            amount,
+                                            fuelDateStr  // 传递日期
                                         )
                                     }
                                 }
@@ -903,9 +914,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         carNumber: String,
         unitName: String,
         deviceName: String,
-        amount: String
+        amount: String,
+        fuelDateStr: String  // 新增: 加油日期字符串
     ) = withContext(Dispatchers.IO) {
+        // 将日期字符串转换为时间戳
+        val readTime = parseDateToTimestamp(fuelDateStr)
+        
         Log.d(TAG, "开始打印第1份小票...")
+        Log.d(TAG, "使用加油日期: $fuelDateStr (时间戳: $readTime)")
         val printSuccess1 = puquPrinter.printToAddress(
             printerAddress = printerAddress,
             cardNumber = cardNumber,
@@ -913,7 +929,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             unitName = unitName,
             deviceName = deviceName,
             amount = amount,
-            readTime = System.currentTimeMillis()
+            readTime = readTime  // 使用转换后的时间戳
         )
         
         if (printSuccess1) {
@@ -930,7 +946,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 unitName = unitName,
                 deviceName = deviceName,
                 amount = amount,
-                readTime = System.currentTimeMillis()
+                readTime = readTime  // 使用转换后的时间戳
             )
             
             if (printSuccess2) {
@@ -1532,41 +1548,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
     
     /**
-     * 显示日期选择对话框
-     */
-    private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-        
-        // 如果已有日期，解析并设置
-        if (fuelDate.isNotEmpty()) {
-            try {
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
-                val date = dateFormat.parse(fuelDate)
-                if (date != null) {
-                    calendar.time = date
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "解析日期失败: $fuelDate", e)
-            }
-        }
-        
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { _, year, month, dayOfMonth ->
-                // 更新日期
-                fuelDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
-                tvFuelDate.text = fuelDate
-                Log.d(TAG, "选择日期: $fuelDate")
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        
-        datePickerDialog.show()
-    }
-    
-    /**
      * 调用API接口录入新卡信息
      */
     private suspend fun callInsertAPI(
@@ -1747,6 +1728,73 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val id = resources.getIdentifier(name, type, packageName)
         Log.d(TAG, "Resource $name ($type) ID: $id")
         return id
+    }
+    
+    /**
+     * 显示日期选择对话框
+     */
+    private fun showDatePickerDialog() {
+        try {
+            val calendar = Calendar.getInstance()
+            
+            // 如果已经有选中的日期,使用它
+            if (fuelDate.isNotEmpty()) {
+                try {
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+                    val date = dateFormat.parse(fuelDate)
+                    if (date != null) {
+                        calendar.time = date
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "解析现有日期失败: $fuelDate", e)
+                }
+            }
+            
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            
+            val datePickerDialog = DatePickerDialog(
+                this,
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    // 更新选中的日期
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+                    val selectedCalendar = Calendar.getInstance()
+                    selectedCalendar.set(selectedYear, selectedMonth, selectedDay)
+                    fuelDate = dateFormat.format(selectedCalendar.time)
+                    tvFuelDate.text = fuelDate
+                    
+                    Log.d(TAG, "用户选择加油日期: $fuelDate")
+                },
+                year,
+                month,
+                day
+            )
+            
+            // 设置日期范围：不能选择未来日期
+            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+            
+            datePickerDialog.show()
+        } catch (e: Exception) {
+            Log.e(TAG, "显示日期选择器失败", e)
+            Toast.makeText(this, "日期选择器打开失败: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    /**
+     * 将日期字符串转换为时间戳
+     * @param dateStr 格式: yyyy-MM-dd
+     * @return 时间戳 (毫秒)
+     */
+    private fun parseDateToTimestamp(dateStr: String): Long {
+        return try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+            val date = dateFormat.parse(dateStr)
+            date?.time ?: System.currentTimeMillis()
+        } catch (e: Exception) {
+            Log.e(TAG, "日期解析失败: $dateStr", e)
+            System.currentTimeMillis()
+        }
     }
     
     private fun createFallbackLayout() {
